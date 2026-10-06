@@ -6,22 +6,22 @@ Updated: 2026-10-06
 
 ## Canonical stage
 
-**P1 — Prove**
+**P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE OAuth, property discovery, Search Analytics POST, Top Queries import, and Canva saved-reference refresh all pass. The temporary refresh fixture has been removed. Final P1 LIVE checks: Top Pages and Trend must each complete cleanly against the verified proof property.
-- **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
-- **Next expected stage:** P2 — Build
+- **Current gate:** Execute Task 002 as the smallest production-shaped MVP: harden selection UX, empty/error/reconnect states, output shaping, deterministic coverage and release-ready documentation without broadening into an SEO suite.
+- **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
+- **Next expected stage:** P3 — Prepare Review
 
 ## Current bet
 
-- **Wager:** **CHEAP-GAMBLE / PROOF**
+- **Wager:** **SHIP QUICKLY / MVP**
 - **Product value:** strong if contextual Canva distribution makes recurring reporting easier for agencies/marketing teams.
 - **Fallback:** Search Console UI → export/copy to Sheets/CSV → import/connect into Canva → repeat on refresh.
 - **Primary risk:** first-party/partner absorption, not implementation complexity.
 - **Proof budget:** one focused day by default.
 - **MVP budget if proof passes:** roughly 2–4 focused implementation days.
-- **Next evidence most likely to change the bet:** live Canva Data Connector discovery/refresh behavior, Google OAuth setup friction, and whether the report-ready dataset UX feels materially easier than the fallback.
+- **Next evidence most likely to change the bet:** whether the production-shaped selection/reconnect/error UX feels obvious in Canva, whether representative larger results fit cleanly, and whether a fresh competitor check still leaves distribution whitespace.
 
 ## Accepted product boundary
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session has closed the refresh gate. Remaining owner action: import Top Pages and Trend against the proof property and report whether each completes without error.**
+**No owner action is currently required. P1 LIVE proof passed. Continue Task 002 autonomously until a genuine human-only Canva/Google or product-review boundary appears.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
@@ -110,11 +110,12 @@ Authoritative:
 - `docs/SCENARIO_CONTRACTS.md`
 
 Execution:
-- `docs/tasks/001-canva-gsc-proof.md` — ACTIVE
-- `docs/tasks/002-production-mvp.md` — PREPARED / blocked on P1 exit
+- `docs/tasks/001-canva-gsc-proof.md` — COMPLETE / PASS
+- `docs/tasks/002-production-mvp.md` — ACTIVE
 
 Evidence:
-- `docs/evidence/task-001-scaffold-local-2026-10-06.md` — LOCAL scaffold/query/ref proof
+- `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md` — final P1 LIVE decision memo
+- `docs/evidence/task-001-scaffold-local-2026-10-06.md` — accumulated LOCAL/LIVE scaffold notes
 - `docs/evidence/`
 
 Owner LIVE bridge:
@@ -125,10 +126,9 @@ Release:
 
 ## Expected next sequence
 
-1. Run Task 001 without broadening scope.
-2. Record DOC/LOCAL/LIVE evidence and explicit P1 decision.
-3. If the direct refreshable connector path passes, move immediately to **P2 — Build**.
-4. Execute Task 002 as one coherent implementation checkpoint.
-5. P3 objective/product-quality pass before owner review.
-6. One prepared owner product pass.
-7. P5 Canva publication/commercial batching.
+1. Execute Task 002 as one coherent implementation checkpoint.
+2. Re-run deterministic tests and `docs/SCENARIO_CONTRACTS.md`.
+3. Capture representative LIVE/non-zero/SCALE evidence when a suitable property is available.
+4. Move to **P3 — Prepare Review** only after objective/product-quality checks pass.
+5. One prepared owner product pass.
+6. P5 Canva publication/commercial batching.
