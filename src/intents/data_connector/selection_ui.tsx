@@ -79,7 +79,8 @@ export function SelectionUi({
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
-  const [error, setError] = useState<string | null>(contextMessage);
+  const [notice, setNotice] = useState<string | null>(contextMessage);
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const maxReportRows = Math.min(
@@ -91,6 +92,7 @@ export function SelectionUi({
 
   async function loadProperties(forceRefresh = false) {
     setLoading(true);
+    setError(null);
     setSuccess(null);
 
     try {
@@ -135,6 +137,7 @@ export function SelectionUi({
   }, []);
 
   function clearFeedback() {
+    setNotice(null);
     setError(null);
     setSuccess(null);
   }
@@ -287,6 +290,8 @@ export function SelectionUi({
 
   return (
     <Rows spacing="2u">
+      {notice ? <Text>{notice}</Text> : null}
+
       <Text>
         Import report-ready Search Console data. Query and page reports contain
         Google&apos;s top rows, not an exhaustive export.
