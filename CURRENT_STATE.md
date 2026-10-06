@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE Google OAuth and property discovery both pass using the temporary GitHub Pages Search Console property. Next prove the Search Analytics POST path for Top Queries / Top Pages / Trend, then refresh behavior.
+- **Current gate:** LIVE Google OAuth + property discovery pass, and Top Queries Search Analytics POST reaches Google successfully with a clean zero-row response on the new proof property. Empty datasets are now treated as valid completed DataTables so we can prove Top Queries / Top Pages / Trend linking and refresh without waiting for traffic.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session is in progress. OAuth passes and the temporary GitHub Pages property now appears in Canva. Next action: run Top Queries / Top Pages / Trend imports and capture the first result/error.**
+**The owner-authenticated LIVE session is in progress. Pull the empty-dataset patch, verify tests/typecheck, then import Top Queries / Top Pages / Trend and refresh one linked empty dataset.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
