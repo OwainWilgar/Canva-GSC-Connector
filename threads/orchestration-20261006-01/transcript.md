@@ -713,3 +713,39 @@ In the connector, use one property with real data and run these in sequence:
 If all four work, P1 is very close to passing. If anything fails, send me the **first visible error** and which dataset/action caused it.
 
 I’ve recorded OAuth + property listing as LIVE evidence and advanced the current gate accordingly.
+
+
+## Turn 0016
+
+### User
+
+[Uploaded screenshot of the connector with the Property dropdown open and showing “No options available”. User message: “ah”]
+
+### Assistant message 1
+
+Yep — this screenshot shows the next real bug: OAuth is still active, but the property request is returning an **empty list**, and our UI currently renders that as a useless “No options available” dropdown. Since you saw properties earlier, I’m treating this as a reproducible LIVE state issue rather than “you have no properties.” I’m checking the GSC `sites.list` response/permission behavior and our reload logic now, then I’ll patch the connector so it tells us exactly what’s happening instead of silently emptying the selector.
+
+### Assistant message 2
+
+I’ve narrowed this down: Google’s `sites.list` endpoint returns the sites **for the current authorized Google user**, and a successful response may contain an empty `siteEntry` array. That is exactly what our code turns into “No options available.” citeturn287653view0
+
+Because you had properties moments earlier, I don’t want you guessing at the account. I’m adding a proper empty-state with **Retry** and **Switch Google account** so we can distinguish a stale token/account selection from a genuine “no Search Console access” result.
+
+### Assistant final
+
+Yes — that screenshot means **OAuth is still connected, but Google returned zero Search Console properties for the currently authorized account**. Our old UI hid that distinction behind Canva's generic “No options available.” Google's `sites.list` endpoint only returns sites the current user can access, in `siteEntry`; an empty list is therefore a valid API result rather than an auth error. citeturn287653view0
+
+Because properties appeared earlier, do this in order:
+
+1. In the same browser, open Google Search Console and make sure the **same Google account you authorized in Canva** still shows the expected properties.
+2. Pull the patch I just pushed:
+   ```powershell
+   git pull
+   npm run lint:types
+   ```
+   If the preview doesn't hot-reload, restart `canva apps start --preview`.
+3. The connector now has a real zero-state with **Retry** and **Switch Google account**.
+   - Click **Retry** first; it forces Canva to refresh the access token before listing properties.
+   - If it is still empty, click **Switch Google account** and choose the account that actually owns/has access to the Search Console properties.
+
+I also moved P1 back from “property listing passed” to **“OAuth passed; property listing must be reproducible”**. Once the properties stay present after reload/reconnect, we continue with Top Queries / Top Pages / Trend.
