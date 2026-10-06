@@ -14,10 +14,27 @@ function numberCell(value: number): DataTableCell {
 }
 
 function dateCell(value: string): DataTableCell {
-  return {
-    type: "date",
-    value: new Date(`${value}T00:00:00Z`).valueOf() / 1000,
-  };
+  const seconds = new Date(`${value}T00:00:00Z`).valueOf() / 1000;
+  if (!Number.isFinite(seconds)) {
+    throw new Error(
+      "Search Console returned an invalid report date. Try the report again.",
+    );
+  }
+
+  return { type: "date", value: seconds };
+}
+
+function requiredMetric(
+  row: SearchAnalyticsRow,
+  metric: "clicks" | "impressions" | "ctr" | "position",
+): number {
+  const value = row[metric];
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new Error(
+      "Search Console returned an incomplete report row. Try the report again.",
+    );
+  }
+  return value;
 }
 
 export function buildGscDataTable(
@@ -43,19 +60,24 @@ export function buildGscDataTable(
       { name: "Average position", type: "number" },
     ],
     rows: rows.map((row) => {
-      const dimension = row.keys?.[0] ?? "";
+      const dimension = row.keys?.[0];
+      if (typeof dimension !== "string" || !dimension) {
+        throw new Error(
+          "Search Console returned an incomplete report row. Try the report again.",
+        );
+      }
+
       return {
         cells: [
           dataset === "trend"
             ? dateCell(dimension)
             : stringCell(dimension),
-          numberCell(row.clicks ?? 0),
-          numberCell(row.impressions ?? 0),
-          numberCell(row.ctr ?? 0),
-          numberCell(row.position ?? 0),
+          numberCell(requiredMetric(row, "clicks")),
+          numberCell(requiredMetric(row, "impressions")),
+          numberCell(requiredMetric(row, "ctr")),
+          numberCell(requiredMetric(row, "position")),
         ],
       };
     }),
   };
 }
-
