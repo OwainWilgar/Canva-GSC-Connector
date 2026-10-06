@@ -43,7 +43,7 @@ export async function listProperties(
   const body = (await response.json()) as {
     siteEntry?: GscProperty[];
   };
-  return body.siteEntry ?? [];
+  return normalizeProperties(body.siteEntry ?? []);
 }
 
 export async function querySearchAnalytics(
@@ -75,4 +75,21 @@ export async function querySearchAnalytics(
   if (!response.ok) throw classifyHttpError(response.status);
 
   return (await response.json()) as SearchAnalyticsResponse;
+}
+
+
+export function normalizeProperties(
+  properties: GscProperty[],
+): GscProperty[] {
+  const unique = new Map<string, GscProperty>();
+
+  for (const property of properties) {
+    const siteUrl = property.siteUrl?.trim();
+    if (!siteUrl || unique.has(siteUrl)) continue;
+    unique.set(siteUrl, { ...property, siteUrl });
+  }
+
+  return [...unique.values()].sort((a, b) =>
+    a.siteUrl.localeCompare(b.siteUrl),
+  );
 }
