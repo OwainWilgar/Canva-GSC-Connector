@@ -1131,3 +1131,59 @@ The architecture decision is now settled: **direct Canva → Google Search Conso
 The fresh competitor check still did not surface an obvious direct in-Canva Google Search Console Data Connector. What did surface were external automation/data products, so the whitespace still looks credible—but we'll recheck again before publication rather than claim exclusivity. citeturn655854search1turn433118search5turn433118search6
 
 Next factory step is Task 002: production-shaped UX, deterministic completeness, error/reconnect states, and bounded scale evidence. No owner action is required right now.
+
+
+## Turn 0034
+
+### User
+
+proceed
+
+### Assistant message 1
+
+Proceeding with P2 as a single production-shaped build checkpoint. I’m starting from the active Task 002 packet and scenario contracts, then I’ll harden the connector through the obvious compile/test/UX fixes without bouncing routine decisions back to you.
+
+### Assistant message 2
+
+I’ve found the main P2 hardening opportunities. Two are correctness issues, not polish: Canva’s row limit applies to **data rows** (we were incorrectly subtracting one for a header that isn’t part of `rows`), and refresh failures should use Canva’s native `outdated_source_ref` / `remote_request_failed` statuses instead of collapsing everything into `app_error`. I’m fixing those first, then layering the user-facing selection/recovery copy and deterministic scenario coverage on top.
+
+### Assistant message 3
+
+The connector core is now using Canva’s native error semantics and the real row/column limits correctly. I’m moving through the UI layer next: edit-vs-import state, explicit rolling-date/Top-row semantics, deterministic property fallback, import loading, and recovery copy for stale saved sources—without adding Country/Device or other scope that P1 didn’t justify.
+
+### Assistant message 4
+
+The core and UI hardening is in place. I’m now doing the P2 completeness pass: scenario coverage, user-facing documentation, confirmed architecture/status docs, and a repository hygiene check for accidental credential material. After that I’ll leave only the validation items that genuinely require an executable Canva/npm environment.
+
+### Assistant message 5
+
+One more correctness pass caught a subtle issue: the table shaper was defaulting any missing Google metric to `0`. That could silently fabricate data, which violates our own requirements. I’m tightening row validation so missing/invalid dimensions or metrics fail explicitly instead of being converted into plausible-looking zeros.
+
+### Assistant message 6
+
+P2 is functionally shaped now. I’m adding one bounded “large report” deterministic case at the chosen 1,000-row product cap and then freezing the implementation for executable validation; I’m not expanding into pagination/25k exports because that would violate the report-first product boundary.
+
+### Assistant message 7
+
+Implementation is now frozen for validation. I’m doing one final source/status consistency check before handing you the single local validation batch; I’m not moving to P3 on unexecuted code.
+
+### Assistant final
+
+P2 implementation is now **frozen at the validation gate**. I have not moved the project to P3 on unexecuted code.
+
+What changed in this pass: connector errors now use Canva's native stale-source/retry semantics; data refs are sanitized; Canva row/column limits are handled correctly with a 1,000-row report cap; malformed Google rows no longer get silently converted to zeros; property selection is normalized; the selection UI now has read-only/top-row/rolling-date explanations, import-vs-update state, loading/recovery/account-switch behavior, and size-limit feedback; S1–S7 are mapped to deterministic coverage; and `docs/USER_GUIDE.md` plus the P2 evidence memo are in place. The targeted credential scan was clean.
+
+The only blocker now is executable validation on your already-configured machine. Please run this exact batch from the repo:
+
+```powershell
+git pull
+npm install
+npm run lint:types
+npm test
+npm run build
+canva apps start --preview
+```
+
+If the four command checks are green, do one narrow Canva Sheets smoke pass: open the connector, confirm the hardened UI renders, edit an existing connected source and confirm **Update data** appears, import one normal dataset, then **Refresh Data** once.
+
+Send me the command output plus whether that smoke pass was green. If it is, I’ll close Task 002 and move the project immediately to **P3 — Prepare Review**.
