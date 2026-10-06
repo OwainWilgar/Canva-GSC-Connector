@@ -53,6 +53,8 @@ Prepare:
 
 Do not expose OAuth client secrets or technical token handling to users.
 
+Before public launch, confirm the Google Cloud project's actual classification for `webmasters.readonly`. Google requires verification for apps requesting sensitive or restricted scopes; do not assume development/test OAuth approval is production-ready.
+
 ## 5. Privacy/security/support facts
 
 Before publication, make explicit:
@@ -108,6 +110,7 @@ Before publication:
 - local deterministic tests pass;
 - representative LIVE acceptance passes;
 - OAuth scope/config reviewed;
+- Google OAuth brand/scope verification requirement resolved for the production project;
 - non-exhaustive data claims accurate;
 - privacy/support/legal fields prepared;
 - monetization choice recorded;
