@@ -1009,3 +1009,10 @@ After clicking **Done**:
 3. Look for **Edit data** in the contextual toolbar, then **Refresh**. Canva documents connected-data refresh as **Edit data → Refresh**. citeturn835666search1turn835666search6
 
 One important caveat: because this dataset has **zero rows**, Canva may not create a selectable connected range at all. If you click **Done** and the sheet remains completely blank with no linked range / no **Edit data** option, send me that screen. That would mean zero-row data is enough to prove the API/import path, but **not enough to exercise Canva's refresh UI**, and we'll use a separate fixture-backed refresh proof instead of waiting days for Google traffic.
+
+
+## Turn 0028
+
+User supplied a screenshot after leaving the connector.
+
+Assistant corrected the refresh test to run from a Canva Sheet rather than a regular design and gave the Canva Sheets import/refresh path.
