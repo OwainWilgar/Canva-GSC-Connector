@@ -287,8 +287,6 @@ export function SelectionUi({
 
   return (
     <Rows spacing="2u">
-      {contextMessage ? <Text>{contextMessage}</Text> : null}
-
       <Text>
         Import report-ready Search Console data. Query and page reports contain
         Google&apos;s top rows, not an exhaustive export.
