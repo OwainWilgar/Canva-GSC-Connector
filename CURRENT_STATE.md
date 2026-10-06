@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** P2 implementation is frozen. Run the executable validation batch (typecheck, tests, build, narrow Canva smoke) on the owner machine; do not move to P3 until it is green.
+- **Current gate:** deterministic P2 validation is green (typecheck, 8/8 Jest suites / 44/44 tests, build, preview startup). Only the authenticated Canva Sheets smoke remains: hardened UI render, Update data on an existing source, normal import, and one native refresh.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**Use Codex on the owner machine as the default P2 validator. Codex should run the local install/typecheck/test/build loop, start Canva preview, and—when Browser use is available—drive the narrow Canva Sheets smoke. Owner attention is required only for login/2FA/host approvals or other human-only account prompts, plus later subjective product review.**
+**Owner action now is only to complete Canva login in the already-open Codex browser tab (plus any 2FA/consent prompt). Then hand control back to Codex to finish the four-step authenticated smoke. Do not rerun terminal validation unless source changes.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
@@ -111,7 +111,7 @@ Authoritative:
 
 Execution:
 - `docs/tasks/001-canva-gsc-proof.md` — COMPLETE / PASS
-- `docs/tasks/002-production-mvp.md` — ACTIVE / VALIDATION PENDING
+- `docs/tasks/002-production-mvp.md` — ACTIVE / AUTHENTICATED SMOKE PENDING
 
 Evidence:
 - `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md` — final P1 LIVE decision memo
