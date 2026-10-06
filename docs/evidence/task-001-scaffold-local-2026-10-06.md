@@ -1,8 +1,8 @@
-# Task 001 partial evidence — scaffold + local deterministic proof
+# Task 001 accumulated evidence — scaffold + local/LIVE proof
 
 Date: 2026-10-06  
 Stage: **P1 — Prove**  
-Status: **PARTIAL — LIVE gate not yet run**
+Status: **COMPLETE — final decision in `task-001-canva-gsc-live-proof-2026-10-06.md`**
 
 ## Claim tested
 
