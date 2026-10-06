@@ -20,17 +20,16 @@ This is not an SEO analysis product. Canva already owns charts, layouts, present
 
 ## Status
 
-**Canonical stage: P1 — Prove.**
+**Canonical stage: P2 — Build.**
 
-This is a cheap distribution/mechanics proof, not a broad build.
+P1 passed on 2026-10-06: Canva-managed Google OAuth, Search Console property discovery, direct Search Analytics calls, all three dataset paths and native saved-reference refresh were proven without a bespoke backend.
 
 Current gate:
-- scaffold from Canva's current Data Connector template;
-- authenticate to Google using Canva-managed OAuth;
-- list/select a Search Console property;
-- produce one refreshable Data Connector table for each required dataset;
-- confirm size/error/permission behavior;
-- decide whether the direct app -> Google architecture is sufficient.
+- turn the proven mechanics into the smallest production-shaped connector;
+- harden reconnect / empty / error states;
+- keep Top Queries / Top Pages / Trend report-ready and honest about top-row semantics;
+- add deterministic coverage and representative scale evidence;
+- reach P3 without broadening into an SEO suite.
 
 ## Why this shape
 
