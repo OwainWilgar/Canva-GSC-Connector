@@ -1187,3 +1187,41 @@ canva apps start --preview
 If the four command checks are green, do one narrow Canva Sheets smoke pass: open the connector, confirm the hardened UI renders, edit an existing connected source and confirm **Update data** appears, import one normal dataset, then **Refresh Data** once.
 
 Send me the command output plus whether that smoke pass was green. If it is, I’ll close Task 002 and move the project immediately to **P3 — Prepare Review**.
+
+
+## Turn 0035
+
+### User
+
+P2 validation: Jest reported 7/8 suites and 43/44 tests passing. The only failure was `tests/limits.test.ts`: the test expected `"five-column"`, while production correctly threw `"This Canva surface allows 4 columns, but this report needs 5."`.
+
+### Assistant message 1
+
+This is a **test assertion bug, not a product-code failure**. The implementation is correctly rejecting a 4-column Canva surface with an actionable message; the test was asserting an old phrase (`"five-column"`) that the production copy no longer uses. I’m fixing the test to assert the actual contract (`needs 5`) and recording the validation result.
+
+### Assistant final
+
+Fixed on `main`. This was only a stale test assertion; the production code was behaving correctly.
+
+Run:
+
+```powershell
+git pull
+npm test
+npm run build
+```
+
+You do **not** need to rerun `npm install` or `npm run lint:types` unless one of those changed locally since the last pass.
+
+Expected now:
+- Jest: **8/8 suites, 44/44 tests**
+- Build: green
+
+If both pass, continue the narrow Canva smoke:
+1. open the connector in Canva Sheets;
+2. confirm the hardened UI renders;
+3. edit an existing connected source and confirm **Update data** appears;
+4. import one normal dataset;
+5. **Refresh Data** once.
+
+Send me the test/build result plus whether that smoke was green.
