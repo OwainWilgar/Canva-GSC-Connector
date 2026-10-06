@@ -138,3 +138,22 @@ Fix:
 
 Next:
 - owner pulls, runs `npm install`, then reruns typecheck/tests and `canva apps start --preview`.
+
+
+## Owner-local validation update — Rspack compatibility seam
+
+Observed:
+- `canva apps start --preview` reached `@canva/app-scripts 1.1.2`.
+- Runtime failed with: `[rsbuild] The current Rspack version does not meet the requirements, the minimum supported version of Rspack is 2.2.3`.
+
+Cross-check:
+- Canva's current Data Connector starter repository still declares `@rspack/core: 2.0.8`.
+- The installed runtime's explicit minimum requirement is therefore treated as the stronger compatibility signal for this proof.
+
+Fix:
+- raised root `@rspack/core` pin from `2.0.8` to exact `2.2.3`;
+- retained the existing `@canva/app-scripts -> @rspack/core` override so app-scripts resolves the same root version.
+- fix commit: `45f9de6aed0c618a62a13d30be92a22dd25b03c8`
+
+Next:
+- owner pulls, runs `npm install`, reruns typecheck/tests, then `canva apps start --preview`.
