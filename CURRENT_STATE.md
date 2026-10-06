@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LOCAL scaffold/query/ref proof is prepared; complete the owner-authenticated Canva + Google OAuth LIVE lane and decide whether direct iframe → Google API calls survive real Canva/CORS behavior.
+- **Current gate:** LIVE Google OAuth and Search Console property listing now pass. Prove Search Analytics POST for Top Queries / Top Pages / Trend, then refresh a saved data reference and capture one representative failure/scale observation.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**One prepared P1 LIVE session is now the genuine blocking seam.**
+**The owner-authenticated LIVE session is in progress. OAuth + property listing have passed.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
