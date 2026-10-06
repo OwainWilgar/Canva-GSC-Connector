@@ -44,6 +44,27 @@ function selectionErrorMessage(
   return fallback;
 }
 
+function canvaErrorSummary(error: unknown): {
+  name?: string;
+  code?: string;
+  message?: string;
+} {
+  if (!error || typeof error !== "object") return {};
+
+  const value = error as {
+    name?: unknown;
+    code?: unknown;
+    message?: unknown;
+  };
+
+  return {
+    name: typeof value.name === "string" ? value.name : undefined,
+    code: typeof value.code === "string" ? value.code : undefined,
+    message:
+      typeof value.message === "string" ? value.message : undefined,
+  };
+}
+
 export function SelectionUi({
   request,
 }: {
@@ -218,9 +239,18 @@ export function SelectionUi({
         searchType: "web",
       });
 
+      const title = dataSourceTitle(dataset, property);
+
+      console.debug("[GSC connector] updateDataRef request", {
+        sourceBytes: new TextEncoder().encode(source).length,
+        titleLength: title.length,
+        limit: request.limit,
+        dataset,
+      });
+
       const result = await request.updateDataRef({
         source,
-        title: dataSourceTitle(dataset, property),
+        title,
       });
 
       if (result.status === "completed") {
@@ -250,7 +280,11 @@ export function SelectionUi({
         result.message ||
           "Search Console could not prepare this report. Review the selection and try again.",
       );
-    } catch {
+    } catch (caught) {
+      console.error(
+        "[GSC connector] updateDataRef threw",
+        canvaErrorSummary(caught),
+      );
       setError(
         "Could not save this Search Console selection in Canva. Try again.",
       );
