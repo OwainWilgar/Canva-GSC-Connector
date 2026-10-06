@@ -1,8 +1,8 @@
 # Owner LIVE proof bridge — P1
 
-Status: **READY WHEN REQUESTED BY ORCHESTRATOR**
+Status: **COMPLETED — P1 PASS**
 
-Purpose: complete the only current owner-authenticated seam in one session, then return control to the implementation thread.
+Purpose: historical record of the owner-authenticated P1 seam. Reuse only when repeating LIVE validation; ordinary continuation now follows Task 002.
 
 Do not paste OAuth client secrets, access tokens, refresh tokens, or Canva CLI auth tokens into chat or the repository.
 
