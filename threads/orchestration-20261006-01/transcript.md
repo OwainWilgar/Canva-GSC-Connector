@@ -572,3 +572,51 @@ git diff -- package.json
 ```
 
 Otherwise the expected path is: pull succeeds → `npm install` updates dependencies → typecheck/tests stay green → preview boots.
+
+
+## Turn 0012
+
+### User
+
+Time:        0.884 s
+Ran all test suites.
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> canva apps start --preview
+
+▗▀▀▖       ▗    
+█  ▗▞▜ ▙▜ ▌▐▗▞▜   │  @canva/app-scripts · dev
+▜▄▄▘▙▜▞▌▐▞▚▛▘▙▜▞  │  1.1.2
+
+Error: [rsbuild] The current Rspack version does not meet the requirements, the minimum supported version of Rspack is 2.2.3
+
+### Assistant message 1
+
+That’s another dependency mismatch in the seed, and the error is precise: `@canva/app-scripts 1.1.2` now requires **Rspack ≥ 2.2.3**, while I restored the older `2.0.8` pin from the starter snapshot. I’m checking Canva’s current starter package before patching so we take the exact supported version rather than merely satisfying the minimum.
+
+### Assistant message 2
+
+I’ve confirmed something useful: Canva’s current starter repo still pins `@rspack/core` at `2.0.8`, but the actual installed `@canva/app-scripts 1.1.2` is rejecting that at runtime and requires **≥ 2.2.3**. The live CLI/runtime evidence is stronger than the stale template pin, so I’m correcting our repo to `2.2.3` exactly and keeping the override so app-scripts uses that root version.
+
+### Assistant final
+
+That failure is now fixed on `main`.
+
+The important point is that your environment successfully reached **`@canva/app-scripts 1.1.2`**; the remaining blocker was just the Rspack version. Canva's current starter snapshot still says `2.0.8`, but the actual runtime explicitly requires **Rspack ≥ 2.2.3**, so I raised our pin to exact `2.2.3` in commit `45f9de6aed0c618a62a13d30be92a22dd25b03c8`.
+
+Run:
+
+```powershell
+git pull
+npm install
+npm run lint:types
+npm test
+canva apps start --preview
+```
+
+You do **not** need to stash anything this time unless Git says you have local changes again.
+
+If preview boots, the next thing I need is simply:
+- whether Canva opens the app preview;
+- whether **Connect Google** appears;
+- what happens after you click it.
+
+If it fails again, paste only the **first new error** after the `@canva/app-scripts · dev` banner.
