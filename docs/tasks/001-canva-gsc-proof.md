@@ -1,7 +1,7 @@
 # Task 001 — Canva ↔ Google Search Console proof
 
 Canonical stage: **P1 — Prove**  
-Status: **ACTIVE**
+Status: **COMPLETE — PASS**
 
 ## Decision
 
@@ -166,7 +166,7 @@ Escalate if:
 
 ## Owner gate
 
-**IN PROGRESS / NEAR COMPLETE.** OAuth, property selection, Top Queries and native Canva refresh are proven. The temporary refresh fixture has been removed. Only Top Pages and Trend remain to be exercised LIVE against the proof property.
+**COMPLETE.** OAuth, property selection, Top Queries, Top Pages, Trend and native Canva refresh are proven. The temporary refresh fixture has been removed.
 
 Use exactly:
 - `docs/OWNER_LIVE_PROOF.md`
@@ -177,14 +177,8 @@ Never ask for secrets in chat or commit them.
 
 ## Handoff
 
-Create:
-`docs/evidence/task-001-canva-gsc-live-proof-YYYY-MM-DD.md`
+Final evidence:
+- `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md`
 
-State:
-- passed;
-- failed;
-- open;
-- measurements;
-- accepted scope changes;
-- rejected/deferred scope;
-- exact P1 decision and next stage.
+P1 decision:
+> **PASS → P2 Build**
