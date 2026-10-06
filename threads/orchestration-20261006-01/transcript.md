@@ -1016,3 +1016,44 @@ One important caveat: because this dataset has **zero rows**, Canva may not crea
 User supplied a screenshot after leaving the connector.
 
 Assistant corrected the refresh test to run from a Canva Sheet rather than a regular design and gave the Canva Sheets import/refresh path.
+
+
+## Turn 0030
+
+### User
+
+[Uploaded Canva Sheets screenshot after importing the zero-row dataset; sheet remains visually unchanged. User: "i pressed import, nothing looks difffernet"]
+
+### Assistant message 1
+
+That’s consistent with a **zero-row dataset**: Canva successfully accepts the import, but there are no cells to write, so the sheet looks unchanged and there’s no connected range to select. I’m treating this as a limitation of using an empty live property for the refresh proof, not as another connector failure. I’ll record it, then I’m going to add a clearly marked **development-only non-empty fixture** so we can prove Canva’s link/refresh mechanics without waiting days for Google traffic.
+
+### Assistant message 2
+
+The blank sheet confirms the zero-row case can’t exercise Canva’s refresh UI: there’s no imported range to select. I’m adding a **P1-only “Refresh Fixture” dataset** that appears only for our GitHub Pages proof property and writes one clearly labeled synthetic row whose timestamp changes on every refresh. That lets us prove Canva’s saved-reference/refresh loop separately from the already-proven live Google API path, then I’ll remove the fixture before P2.
+
+### Assistant final
+
+That confirms the zero-row limitation: **the import succeeds, but there are no cells to materialize, so the Sheet looks unchanged and Canva has no visible connected range to refresh**.
+
+I’ve added a **P1-only Refresh Fixture** to the repo. It appears only for our temporary GitHub Pages proof property and returns one synthetic row whose timestamp changes each time Canva calls `getDataTable`. That lets us prove the Canva saved-reference/refresh loop separately from the live Google path we already proved.
+
+Run:
+
+```powershell
+git pull
+npm run lint:types
+npm test
+```
+
+Then, in the Canva Sheet:
+
+1. Reopen **Google Search Cons** under Import data.
+2. Keep the GitHub Pages proof property selected.
+3. Under **Dataset**, choose **Refresh Fixture (P1 only)**.
+4. Click **Import data**, then **Done**.
+5. You should now see one actual row containing text like `P1 refresh fixture · <timestamp>`.
+6. Select that imported range and use **Edit data → Refresh**.
+7. Confirm the timestamp changes.
+
+If the timestamp changes, refresh is proven. I’ll then remove the fixture before moving the project into P2.
