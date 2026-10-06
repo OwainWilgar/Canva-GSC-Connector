@@ -201,3 +201,63 @@ If the form shows Revocation exchange URL, use:
 https://oauth2.googleapis.com/revoke
 
 Use Credential transfer mode = Body, PKCE = enabled, and Multi-account = off for this proof.
+
+
+## Turn 0006
+
+### User
+
+npm test
+npm notice run canva-gsc-connector@0.1.0 test
+npm notice run jest --no-cache --passWithNoTests
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm run lint:types
+npm notice run canva-gsc-connector@0.1.0 lint:types
+npm notice run tsc --noEmit
+'tsc' is not recognized as an internal or external command,
+operable program or batch file.
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector>
+
+### Assistant message 1
+
+That failure is local setup, not the connector code yet: Windows can’t find `jest` or `tsc` because the repo dependencies haven’t been installed into `node_modules`. I’m checking the repo’s current package metadata and then I’ll give you the shortest exact recovery sequence.
+
+### Assistant message 2
+
+The fix is just to install the repo’s dependencies before running the checks. Don’t install Jest or TypeScript globally—we want the versions pinned by this project so the proof is reproducible.
+
+### Assistant final
+
+Those errors mean the project dependencies have not been installed yet. Both `jest` and `tsc` are already declared in this repo's `devDependencies`.
+
+From the same PowerShell directory, run:
+
+```powershell
+node -v
+npm -v
+npm install
+npm test
+npm run lint:types
+```
+
+The Node version should be **22.x or 24.x**. If it isn't, switch first:
+
+```powershell
+nvm install 24
+nvm use 24
+npm install
+```
+
+Do **not** install Jest or TypeScript globally; that would hide a broken project install.
+
+If `npm install` succeeds but either command is still “not recognized”, run:
+
+```powershell
+Test-Path .\node_modules\.bin\jest.cmd
+Test-Path .\node_modules\.bin\tsc.cmd
+```
+
+Both should return `True`.
+
+If `npm install` fails, paste the install error output—that is the next thing to diagnose. If it succeeds, send me the output from `npm test` and `npm run lint:types`, and I’ll drive the next P1 step.
