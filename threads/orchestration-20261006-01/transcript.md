@@ -261,3 +261,105 @@ Test-Path .\node_modules\.bin\tsc.cmd
 Both should return `True`.
 
 If `npm install` fails, paste the install error output—that is the next thing to diagnose. If it succeeds, send me the output from `npm test` and `npm run lint:types`, and I’ll drive the next P1 step.
+
+
+## Turn 0007
+
+### User
+
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> node -v
+v24.18.0
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm -v
+12.0.1
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm install
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 631 packages, and audited 632 packages in 23s
+
+54 packages are looking for funding
+  run `npm fund` for details
+
+34 vulnerabilities (5 moderate, 29 high)
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm warn install-scripts 2 packages had install scripts blocked because they are not covered by allowScripts:
+npm warn install-scripts   @swc/core@1.15.1 (postinstall: node postinstall.js)
+npm warn install-scripts   unrs-resolver@1.12.2 (postinstall: node postinstall.js)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm test
+npm notice run canva-gsc-connector@0.1.0 test
+npm notice run jest --no-cache --passWithNoTests
+ PASS  tests/errors.test.ts
+ PASS  tests/data_ref.test.ts
+ PASS  tests/query.test.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        2.181 s
+Ran all test suites.
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm run lint:types
+npm notice run canva-gsc-connector@0.1.0 lint:types
+npm notice run tsc --noEmit
+src/auth/google.ts:24:5 - error TS2322: Type 'Map<string, string>' is not assignable to type 'ExcludeKeys<Record<string, string>, ForbiddenKey>'.
+  Index signature for type 'string' is missing in type 'Map<string, string>'.
+
+24     queryParams: GOOGLE_REFRESH_QUERY,
+       ~~~~~~~~~~~
+
+
+Found 1 error in src/auth/google.ts:24
+
+### Assistant message 1
+
+Good: the dependency install is healthy enough for P1 and all 11 deterministic tests pass. The type failure is ours, not your setup—the current Canva OAuth type expects `queryParams` as a plain string record, not a `Map`. I’m patching that now and recording this turn; don’t run `npm audit fix --force` while we’re proving the connector.
+
+### Assistant message 2
+
+I’ve fixed the actual type mismatch on `main`: `queryParams` is now a plain object (`{ access_type: "offline", prompt: "select_account" }`). Your 11/11 passing tests are now real LOCAL evidence; the only remaining LOCAL check is to pull that patch and rerun TypeScript.
+
+### Assistant final
+
+Good progress. We now have **real LOCAL proof** that dependency installation works and all **11/11 tests pass**.
+
+I fixed the TypeScript error on `main` in commit `f9da19887bd2d74fea9c56038895132c82e50b93`. The bug was ours: Canva expects OAuth `queryParams` as a plain string record, not a `Map`.
+
+Run this next:
+
+```powershell
+git pull
+npm run lint:types
+npm test
+```
+
+If both are green, move straight into the Canva tooling seam:
+
+```powershell
+canva apps doctor
+canva apps config status
+```
+
+If the repo is not linked to the Canva app yet, do:
+
+```powershell
+canva login
+canva apps link
+```
+
+Then:
+
+```powershell
+canva apps config push
+canva apps start --preview
+```
+
+Do **not** run `npm audit fix --force` right now. The audit/deprecation warnings are not the P1 decision gate, and a forced dependency rewrite could destabilize the exact stack we’re trying to prove. I recorded the install/test/typecheck evidence in the repo.
+
+Send me the output of `npm run lint:types` after the pull. If it is clean, we continue directly into the LIVE Canva/OAuth proof.
