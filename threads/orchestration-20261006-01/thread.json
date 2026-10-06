@@ -1,0 +1,11 @@
+{
+  "format": "canva-long-thread-v2",
+  "thread_id": "orchestration-20261006-01",
+  "role": "orchestrator",
+  "project": "Canva Google Search Console Connector",
+  "repository": "OwainWilgar/Canva-GSC-Connector",
+  "branch": "main",
+  "started_at": "2026-10-06T02:32:00+01:00",
+  "status": "active",
+  "transcript": "transcript.md"
+}
