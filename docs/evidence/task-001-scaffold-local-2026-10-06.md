@@ -292,3 +292,26 @@ Conclusion:
 
 Caveat:
 - this newly created property may have no performance rows yet, so a clean no-data response is acceptable evidence for the request path but does not satisfy the non-empty dataset proof required before release.
+
+
+## LIVE Search Analytics update — Top Queries request path PASS
+
+Observed:
+- Top Queries / Last 28 days against the verified proof property returned the app's explicit no-data message.
+- That message is only emitted after the Search Analytics POST succeeds and returns a response with no rows.
+
+Conclusion:
+- direct Canva runtime → Google Search Analytics POST is **PASS**;
+- no backend is required for the core query request path;
+- zero rows are expected for the newly created proof property.
+
+Product correction:
+- Canva's current Data Connector contract permits successful completed data tables with `rows: []`;
+- changed zero Search Analytics rows from `app_error` to `completed` with the correct dataset column schema;
+- added deterministic empty-table tests for Top Queries and Trend.
+
+Next:
+- owner pulls latest source;
+- reruns typecheck/tests;
+- imports Top Queries, Top Pages and Trend as linked empty datasets;
+- refreshes at least one linked dataset to prove saved-reference replay.
