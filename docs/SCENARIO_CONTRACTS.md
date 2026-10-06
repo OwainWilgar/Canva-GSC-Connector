@@ -74,3 +74,18 @@ Before P4 owner review, P3 should exercise:
 - at least one larger Top Queries/Top Pages request to choose sane row limits.
 
 Owner review should judge reporting usefulness and interaction feel, not API correctness already covered.
+
+
+## P2 deterministic coverage map
+
+Current production-shaped implementation covers the scenarios as follows:
+
+- **S1 First connection:** selection UI states that access is read-only, shows one primary Connect Google action, lists normalized properties, and offers explicit account switching.
+- **S2 Top Queries:** query dimension and non-zero/empty table shaping are deterministic tests; visible copy states that query/page reports are top rows rather than exhaustive exports.
+- **S3 Top Pages:** full page URL identity and metric shaping are deterministic tests.
+- **S4 Trend:** date dimension/query generation and Canva date-cell conversion are deterministic tests; missing dates are not fabricated.
+- **S5 Refresh next period:** data refs are versioned/non-secret; rolling-date recomputation is a deterministic test; native saved-reference refresh is P1 LIVE-PASS.
+- **S6 Access/auth failure:** GSC HTTP errors map to Canva re-selection, retryable remote failure, or actionable app error; no raw Google payload is surfaced.
+- **S7 Low/no data:** zero rows are a valid completed DataTable; metadata/user guide explain legitimate empty results and recovery choices.
+
+P3 must still inspect these flows in the real Canva UI and capture representative non-zero/SCALE behavior before owner review.
