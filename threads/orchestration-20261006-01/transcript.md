@@ -620,3 +620,29 @@ If preview boots, the next thing I need is simply:
 - what happens after you click it.
 
 If it fails again, paste only the **first new error** after the `@canva/app-scripts · dev` banner.
+
+
+## Turn 0013
+
+### User
+
+[Uploaded screenshot showing Canva preview on the Google Search Cons app details card with an Open button.]
+
+### Assistant message 1
+
+The preview is running successfully now. You’re on Canva’s app details card, not inside our connector UI yet—the next step is simply to click **Open** at the bottom-left. I’ll record this turn, then the next P1 evidence is whether our selection UI loads and shows **Connect Google**.
+
+### Assistant final
+
+This is a good checkpoint: **the Canva preview is booting and the linked app is discoverable**.
+
+You’re currently on Canva’s app details card. Click **Open** at the bottom-left.
+
+After that, one of two things should happen:
+
+- **Expected:** our connector UI loads and shows **Connect Google**.
+- **Unexpected:** the panel is blank, errors, or shows something other than our property/dataset UI.
+
+If **Connect Google** appears, click it and continue through Google sign-in. The next evidence we need is whether Canva returns you to the app and lists your Search Console properties.
+
+So for now: **click Open**, then send me the next screen or the first visible error.
