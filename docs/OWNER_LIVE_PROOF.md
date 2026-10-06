@@ -81,6 +81,9 @@ After the app has the Data Connector intent/config:
 6. Copy that exact URL.
 7. Go back to **Google Cloud → Google Auth Platform / Clients → your Web application OAuth client**.
 8. Add the copied value under **Authorized redirect URIs**.
+   - Leave **Authorized JavaScript origins** empty for this Canva-managed OAuth flow.
+   - Leave **This client will be used by an AI-powered agent** unchecked.
+   - If the copied Canva value is `https://www.canva.com/apps/oauth/authorized`, use it exactly as shown — no added slash or path.
 9. Save the Google client.
 10. Return to Canva's **Add provider** dialog and complete/save the provider.
 
