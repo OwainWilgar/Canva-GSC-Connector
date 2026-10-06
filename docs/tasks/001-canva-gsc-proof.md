@@ -166,7 +166,7 @@ Escalate if:
 
 ## Owner gate
 
-**READY.** The harness/scaffold is prepared and connected tooling cannot perform the owner's Canva CLI/browser OAuth seam.
+**IN PROGRESS / NEAR COMPLETE.** OAuth, property selection, Top Queries and native Canva refresh are proven. The temporary refresh fixture has been removed. Only Top Pages and Trend remain to be exercised LIVE against the proof property.
 
 Use exactly:
 - `docs/OWNER_LIVE_PROOF.md`
