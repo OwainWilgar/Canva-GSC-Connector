@@ -216,3 +216,27 @@ Still open:
 
 Current decision:
 > **Continue P1; the remaining architecture-defining question is Search Analytics + refresh, not OAuth.**
+
+
+## LIVE property-list reproducibility issue
+
+Observed after an earlier successful property-list result:
+- connector remained authorized;
+- property selector later showed **No options available**;
+- no explicit auth/API error was surfaced.
+
+Interpretation:
+- Google `sites.list` returns only sites available to the currently authorized user and can validly return an empty `siteEntry` list.
+- because the same proof flow previously returned properties, treat this as an account/token/reload-state reproducibility issue until proven otherwise, not as a product-level “no properties” result.
+
+Product fix:
+- added explicit empty-property state;
+- added **Retry** using a forced token refresh;
+- added **Switch Google account** which deauthorizes and re-runs Google authorization;
+- no token or account identifier is persisted by the app.
+
+Next:
+- owner pulls latest source;
+- confirm the exact proof account still has properties in Search Console;
+- use Retry, then Switch Google account if needed;
+- continue to Search Analytics only after property listing is stable.
