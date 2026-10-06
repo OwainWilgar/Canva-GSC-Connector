@@ -24,3 +24,9 @@ export async function authorizeGoogle() {
     queryParams: GOOGLE_REFRESH_QUERY,
   });
 }
+
+
+export async function disconnectGoogle() {
+  const oauth = auth.initOauth();
+  await oauth.deauthorize();
+}
