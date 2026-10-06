@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** deterministic P2 validation is green (typecheck, 8/8 Jest suites / 44/44 tests, build, preview startup). Only the authenticated Canva Sheets smoke remains: hardened UI render, Update data on an existing source, normal import, and one native refresh.
+- **Current gate:** deterministic P2 validation is green and the hardened selection UI renders LIVE, but fresh import currently fails inside Canva's `updateDataRef` callback. Temporary non-sensitive diagnostics are committed to capture Canva's thrown error code plus DataTable row/column/limit summary before changing behavior.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**Owner action now is only to complete Canva login in the already-open Codex browser tab (plus any 2FA/consent prompt). Then hand control back to Codex to finish the four-step authenticated smoke. Do not rerun terminal validation unless source changes.**
+**No further owner interaction should be needed if the authenticated Canva session remains open. Hand the session back to Codex: pull latest main, run the minimal checks required by the diagnostic source change, reproduce one Top Queries import, capture the `[GSC connector]` console diagnostics, and stop without speculative product changes.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
@@ -111,7 +111,7 @@ Authoritative:
 
 Execution:
 - `docs/tasks/001-canva-gsc-proof.md` — COMPLETE / PASS
-- `docs/tasks/002-production-mvp.md` — ACTIVE / AUTHENTICATED SMOKE PENDING
+- `docs/tasks/002-production-mvp.md` — ACTIVE / LIVE IMPORT REGRESSION DIAGNOSIS
 
 Evidence:
 - `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md` — final P1 LIVE decision memo
