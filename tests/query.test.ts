@@ -52,3 +52,29 @@ test("caps GSC row limit at 25000", () => {
     ).rowLimit,
   ).toBe(25_000);
 });
+
+
+test("recomputes a rolling range when a saved ref refreshes later", () => {
+  const ref: GscDataRef = {
+    v: 1,
+    property: "sc-domain:example.com",
+    dataset: "trend",
+    dateRange: "last_28_days",
+    searchType: "web",
+  };
+
+  const first = buildSearchAnalyticsRequest(
+    ref,
+    1_000,
+    new Date("2026-10-06T12:00:00Z"),
+  );
+  const later = buildSearchAnalyticsRequest(
+    ref,
+    1_000,
+    new Date("2026-10-07T12:00:00Z"),
+  );
+
+  expect(first.endDate).toBe("2026-10-05");
+  expect(later.endDate).toBe("2026-10-06");
+  expect(later.startDate).not.toBe(first.startDate);
+});
