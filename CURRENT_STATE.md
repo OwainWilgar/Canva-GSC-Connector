@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** Execute Task 002 as the smallest production-shaped MVP: harden selection UX, empty/error/reconnect states, output shaping, deterministic coverage and release-ready documentation without broadening into an SEO suite.
+- **Current gate:** P2 implementation is frozen. Run the executable validation batch (typecheck, tests, build, narrow Canva smoke) on the owner machine; do not move to P3 until it is green.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**No owner action is currently required. P1 LIVE proof passed. Continue Task 002 autonomously until a genuine human-only Canva/Google or product-review boundary appears.**
+**One bounded owner-local validation batch is now required because this orchestration environment cannot install npm dependencies and the shared GitHub Actions budget is unavailable until 2026-10-10. This is technical validation only, not product review.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
@@ -111,11 +111,12 @@ Authoritative:
 
 Execution:
 - `docs/tasks/001-canva-gsc-proof.md` — COMPLETE / PASS
-- `docs/tasks/002-production-mvp.md` — ACTIVE
+- `docs/tasks/002-production-mvp.md` — ACTIVE / VALIDATION PENDING
 
 Evidence:
 - `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md` — final P1 LIVE decision memo
 - `docs/evidence/task-001-scaffold-local-2026-10-06.md` — accumulated LOCAL/LIVE scaffold notes
+- `docs/evidence/task-002-production-mvp-2026-10-06.md` — P2 implementation evidence / validation pending
 - `docs/evidence/`
 
 Owner LIVE bridge:
