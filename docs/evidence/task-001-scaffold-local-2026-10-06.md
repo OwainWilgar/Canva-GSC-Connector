@@ -336,3 +336,27 @@ Still open:
 - Top Pages empty import;
 - Trend empty import;
 - one refresh of a linked source.
+
+
+## LIVE Canva Sheets update — zero-row range limitation
+
+Observed:
+- importing the verified proof property's zero-row dataset in Canva Sheets completes without error;
+- after import, the sheet remains visually unchanged because there are no rows/cells to materialize;
+- therefore there is no visible connected range to select for the refresh UI.
+
+Interpretation:
+- this does **not** invalidate the already-proven live Google request/import path;
+- it means a zero-row live property cannot by itself exercise Canva's connected-range refresh affordance.
+
+P1-only proof fixture:
+- added dataset option **Refresh Fixture (P1 only)**, visible only for the temporary GitHub Pages proof property;
+- it returns one clearly labeled synthetic row;
+- the row includes the current invocation timestamp so a manual refresh can prove `getDataTable` ran again;
+- it is explicitly development/proof-only and must be removed before P2.
+
+Next:
+- pull latest source;
+- run typecheck/tests;
+- import **Refresh Fixture (P1 only)** in Canva Sheets;
+- finish import, select the resulting connected range, refresh it, and confirm the timestamp changes.
