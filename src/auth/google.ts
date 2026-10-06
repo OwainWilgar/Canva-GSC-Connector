@@ -4,10 +4,10 @@ export const GOOGLE_SEARCH_CONSOLE_SCOPE = new Set([
   "https://www.googleapis.com/auth/webmasters.readonly",
 ]);
 
-const GOOGLE_REFRESH_QUERY = new Map([
-  ["access_type", "offline"],
-  ["prompt", "select_account"],
-]);
+const GOOGLE_REFRESH_QUERY = {
+  access_type: "offline",
+  prompt: "select_account",
+};
 
 export async function getGoogleAccessToken(forceRefresh = false) {
   const oauth = auth.initOauth();
