@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE Google OAuth passes. Search Console property listing succeeded once but then returned an empty list on reload, so make property discovery reproducible before proceeding to Search Analytics POST / refresh proof.
+- **Current gate:** LIVE Google OAuth passes. Google's own Sites:list API Explorer returns HTTP 200 with an empty object for the current proof account, so property discovery is blocked by Google-account/property access rather than Canva code. Fix the proof account's Search Console access, then resume Search Analytics POST / refresh proof.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session is in progress. OAuth + property listing have passed.**
+**The owner-authenticated LIVE session is in progress. OAuth passes; the current proof account has zero Search Console properties according to Google's own API Explorer.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
