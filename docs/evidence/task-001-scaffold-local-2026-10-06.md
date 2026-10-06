@@ -315,3 +315,24 @@ Next:
 - reruns typecheck/tests;
 - imports Top Queries, Top Pages and Trend as linked empty datasets;
 - refreshes at least one linked dataset to prove saved-reference replay.
+
+
+## LIVE empty import update — Top Queries PASS
+
+Observed:
+- after the zero-row handling patch, Top Queries import produced an empty Canva table;
+- no connector/API error was shown;
+- Canva accepted the data source reference and rendered the empty result.
+
+Interpretation:
+- Top Queries selection → `updateDataRef` → `getDataTable` → completed DataTable path is **PASS**;
+- the current UI lacked positive confirmation even though linking succeeded.
+
+Product correction:
+- added explicit post-import confirmation:
+  - “Data source linked successfully. Canva can refresh this selection later.”
+
+Still open:
+- Top Pages empty import;
+- Trend empty import;
+- one refresh of a linked source.
