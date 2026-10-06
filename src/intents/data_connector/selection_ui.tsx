@@ -62,6 +62,7 @@ export function SelectionUi({
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   async function loadProperties(forceRefresh = false) {
     setLoading(true);
@@ -144,6 +145,9 @@ export function SelectionUi({
   }
 
   async function importData() {
+    setError(null);
+    setSuccess(null);
+
     const datasetTitle =
       dataset === "top_queries"
         ? "Top Queries"
@@ -173,6 +177,9 @@ export function SelectionUi({
       );
     } else {
       setError(null);
+      setSuccess(
+        "Data source linked successfully. Canva can refresh this selection later.",
+      );
     }
   }
 
@@ -273,6 +280,7 @@ export function SelectionUi({
         Import data
       </Button>
 
+      {success ? <Text>{success}</Text> : null}
       {error ? <Text>{error}</Text> : null}
     </Rows>
   );
