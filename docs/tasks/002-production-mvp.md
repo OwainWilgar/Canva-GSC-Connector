@@ -1,7 +1,7 @@
 # Task 002 — Production-shaped Canva GSC MVP
 
 Canonical stage: **P2 — Build**  
-Status: **ACTIVE — deterministic validation passed, authenticated smoke pending**
+Status: **ACTIVE — deterministic validation passed, LIVE import regression diagnosis active**
 
 ## Outcome
 
@@ -181,6 +181,19 @@ Owner attention is reserved for:
 If Browser use is unavailable, only the authenticated Canva smoke remains manual; all terminal validation still belongs to Codex.
 
 This is technical validation only. Do not turn it into owner product review.
+
+### Current diagnostic stop
+
+The hardened UI renders LIVE, but a fresh Top Queries import currently throws inside Canva's `updateDataRef` path. Temporary safe diagnostics are committed.
+
+Codex should:
+1. pull latest main;
+2. rerun typecheck/tests because diagnostic source changed;
+3. reproduce one import in the authenticated Canva session;
+4. capture only the `[GSC connector]` diagnostic entries plus the visible error;
+5. stop before speculative fixes.
+
+Do not ask the owner to repeat terminal commands or re-authenticate unless Canva has actually expired the session.
 
 ## Handoff
 
