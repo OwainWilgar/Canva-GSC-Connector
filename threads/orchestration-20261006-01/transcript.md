@@ -452,3 +452,77 @@ canva apps start --preview
 ```
 
 If `lint:types` is green, the next meaningful result is what happens inside the Canva preview when you click **Connect Google**.
+
+
+## Turn 0010
+
+### User
+
+@canva/app-scripts not found, falling back to this project's own start script.
+Run canva apps migrate webpack-to-app-scripts for the newer, faster experience. See the migration guide (https://www.canva.dev/docs/apps/upgrades-and-migrations/app-scripts-migration-guide/) for details.
+
+npm notice run canva-gsc-connector@0.1.0 start
+npm notice run npx @canva/cli apps start
+npm notice run canva-gsc-connector@0.1.0 npx
+npm notice run canva apps start
+
+@canva/app-scripts not found, falling back to this project's own start script.
+Run canva apps migrate webpack-to-app-scripts for the newer, faster experience. See the migration guide (https://www.canva.dev/docs/apps/upgrades-and-migrations/app-scripts-migration-guide/) for details.
+
+npm notice run canva-gsc-connector@0.1.0 start
+npm notice run npx @canva/cli apps start
+npm notice run canva-gsc-connector@0.1.0 npx
+npm notice run canva apps start
+
+@canva/app-scripts not found, falling back to this project's own start script.
+Run canva apps migrate webpack-to-app-scripts for the newer, faster experience. See the migration guide (https://www.canva.dev/docs/apps/upgrades-and-migrations/app-scripts-migration-guide/) for details.
+
+npm notice run canva-gsc-connector@0.1.0 start
+npm notice run npx @canva/cli apps start
+npm notice run canva-gsc-connector@0.1.0 npx
+npm notice run canva apps start
+
+@canva/app-scripts not found, falling back to this project's own start script.
+Run canva apps migrate webpack-to-app-scripts for the newer, faster experience. See the migration guide (https://www.canva.dev/docs/apps/upgrades-and-migrations/app-scripts-migration-guide/) for details.
+
+npm notice run canva-gsc-connector@0.1.0 start
+npm notice run npx @canva/cli apps start
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm run lint:types
+npm notice run canva-gsc-connector@0.1.0 lint:types
+npm notice run tsc --noEmit
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> 
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector> npm run lint:types
+>> 
+npm notice run canva-gsc-connector@0.1.0 lint:types
+npm notice run tsc --noEmit
+
+### Assistant message 1
+
+TypeScript is clean now, so the code fix worked. The repeated `apps start → npm start → apps start` loop is a scaffold issue I introduced by trimming Canva’s current template too aggressively: we kept the CLI `start` script but omitted `@canva/app-scripts`, so the CLI falls back to `npm start`, which calls the CLI again. I’m fixing the repo to match Canva’s current runtime stack rather than having you migrate a brand-new app.
+
+### Assistant message 2
+
+I’ve patched the repo rather than sending you through Canva’s migration wizard. This app doesn’t have a legacy webpack setup to migrate; it was simply missing the current template’s `@canva/app-scripts` runtime dependency. Canva’s docs confirm `@canva/app-scripts` is what powers `canva apps start` and `canva apps build`, and the current starter kit is on `1.1.2`. citeturn511739search1turn511739search2
+
+### Assistant final
+
+The important bit is that **TypeScript is now clean**. The looping start output is a separate scaffold dependency issue, and I’ve fixed it on `main` in commit `1431eff1eea265c81d9e7e03174da3c41f02e19b`.
+
+Run:
+
+```powershell
+git pull
+npm install
+npm run lint:types
+npm test
+canva apps start --preview
+```
+
+I restored the current Canva template pieces we were missing:
+- `@canva/app-scripts ^1.1.2`
+- `@rspack/core 2.0.8`
+- Canva's matching overrides.
+
+You **do not need to run** `canva apps migrate webpack-to-app-scripts`. That migration is for older apps with bespoke webpack/start-runner files; this repo doesn't have those. Canva documents `@canva/app-scripts` as the package that powers `canva apps start`/build in current apps. citeturn511739search1turn511739search3
+
+If `canva apps start --preview` boots, send me what you see in Canva—especially whether **Connect Google** appears and what happens when you click it. If it fails again, paste the **first error after the app-scripts install**, not the repeated fallback loop.
