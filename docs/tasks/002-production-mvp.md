@@ -1,7 +1,7 @@
 # Task 002 — Production-shaped Canva GSC MVP
 
 Canonical stage: **P2 — Build**  
-Status: **PREPARED — blocked on Task 001 P1 exit**
+Status: **ACTIVE**
 
 ## Outcome
 
@@ -13,11 +13,16 @@ Do not broaden into an SEO suite.
 
 ## Current truth to inherit
 
-- GSC remains authoritative;
-- Canva owns charts/design/report composition;
-- OAuth should remain Canva-managed unless P1 disproves it;
-- Top rows are intentional product semantics;
-- required datasets are Top Queries, Top Pages and Trend;
+- P1 **PASSED** on 2026-10-06.
+- GSC remains authoritative.
+- Canva owns charts/design/report composition.
+- OAuth is Canva-managed.
+- Direct Canva → Google Search Console API calls work.
+- Saved non-secret data refs refresh correctly through Canva.
+- No bespoke backend is required for the core path.
+- Top rows are intentional product semantics.
+- Required datasets are Top Queries, Top Pages and Trend.
+- LIVE non-zero rows and representative larger-result behavior remain pre-release validation debt, not P2 architecture blockers.
 - P1 evidence overrides assumptions in this packet.
 
 ## Implement
