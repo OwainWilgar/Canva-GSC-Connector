@@ -89,7 +89,14 @@ export function normalizeProperties(
     unique.set(siteUrl, { ...property, siteUrl });
   }
 
-  return [...unique.values()].sort((a, b) =>
-    a.siteUrl.localeCompare(b.siteUrl),
-  );
+  return [...unique.values()].sort((a, b) => {
+    const aIsDomain = a.siteUrl.startsWith("sc-domain:");
+    const bIsDomain = b.siteUrl.startsWith("sc-domain:");
+
+    if (aIsDomain !== bIsDomain) {
+      return aIsDomain ? -1 : 1;
+    }
+
+    return a.siteUrl.localeCompare(b.siteUrl);
+  });
 }
