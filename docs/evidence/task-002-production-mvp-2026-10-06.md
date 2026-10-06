@@ -189,3 +189,43 @@ Next:
 - pull latest main;
 - rerun `npm test`;
 - then continue `npm run build` and the narrow Canva smoke if green.
+
+
+## LIVE import regression diagnosis prepared
+
+The authenticated smoke isolated a fresh-import failure at `RenderSelectionUiRequest.updateDataRef`.
+
+Current Canva API documentation states that `updateDataRef` throws a `bad_request` when:
+- the data source reference exceeds its source/title size limits; or
+- the completed DataTable exceeds the supplied row/column limit or contains invalid data.
+
+The current connector:
+- serializes a small versioned data reference;
+- caps titles to 255 characters;
+- caps rows to Canva's supplied limit and the 1,000-row product limit;
+- emits five columns only when the supplied surface allows at least five.
+
+Because the UI previously replaced all thrown host errors with a generic message, the exact rejection reason was not observable.
+
+Temporary diagnostic instrumentation has therefore been added. It logs only:
+- data-source byte length;
+- title length;
+- dataset kind;
+- Canva row/column limits;
+- returned DataTable row/column counts;
+- thrown Canva error name/code/message.
+
+It does **not** log:
+- Google access tokens;
+- property identifiers;
+- query/page row contents;
+- authorization headers;
+- data-source JSON contents.
+
+Next diagnostic:
+1. pull latest main in the existing Codex validation session;
+2. run typecheck/tests because source changed;
+3. let the running preview rebuild/restart if required;
+4. reproduce one Top Queries import in the authenticated Canva session;
+5. capture the two `[GSC connector]` console entries and exact visible error;
+6. stop before further code changes so the next patch is evidence-driven.
