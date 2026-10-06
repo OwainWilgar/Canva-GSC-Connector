@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE Google OAuth passes. No pre-existing Search Console property/site is available, so a temporary GitHub Pages proof site has been prepared on `gh-pages`. Enable Pages, verify that URL in Search Console, then resume property/Search Analytics/refresh proof.
+- **Current gate:** LIVE Google OAuth and property discovery both pass using the temporary GitHub Pages Search Console property. Next prove the Search Analytics POST path for Top Queries / Top Pages / Trend, then refresh behavior.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session is in progress. OAuth passes; a temporary GitHub Pages proof site is prepared. GitHub Pages proof site is prepared and the Search Console verification meta tag is now deployed on `gh-pages`. Owner action: wait for Pages to redeploy, then click Verify in Search Console.**
+**The owner-authenticated LIVE session is in progress. OAuth passes and the temporary GitHub Pages property now appears in Canva. Next action: run Top Queries / Top Pages / Trend imports and capture the first result/error.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
