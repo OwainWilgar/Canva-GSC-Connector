@@ -908,3 +908,46 @@ Because this is a brand-new Search Console property, there may be no performance
 - if you get any other error, send the first visible error.
 
 Then we’ll repeat the same check for **Top Pages** and **Trend**.
+
+
+## Turn 0024
+
+### User
+
+[Uploaded screenshot showing Top Queries / Last 28 days returning: "No Search Console data was found for this selection. Try a wider date range or another property."]
+
+### Assistant message 1
+
+That’s actually a strong result: the Search Analytics request reached Google and came back cleanly with **zero rows**, so the direct Canva → GSC POST path is working. I’m checking whether Canva allows a completed DataTable with headers and zero rows; if it does, I’ll change this from an error into a valid empty dataset so we can still prove saved-source refresh without waiting days for search traffic.
+
+### Assistant message 2
+
+Canva’s current Data Connector docs explicitly use `status: "completed"` with `dataTable: { rows: [] }`, so an empty dataset is valid. That means our current “no rows = app error” behavior is unnecessarily blocking the refresh proof. I’m changing zero rows to a successful empty table with the correct column schema, then you’ll be able to import the linked source and test refresh even before Google has accumulated traffic. citeturn812816search0turn812816search1
+
+### Assistant final
+
+That result is useful: **Top Queries reached Google successfully and got a clean zero-row Search Analytics response**. The visible message came from our own code after the API call succeeded.
+
+I’ve patched the connector so zero rows are no longer treated as an error. Canva’s current Data Connector docs explicitly show a successful `completed` response with `dataTable: { rows: [] }`, so an empty dataset is valid. citeturn812816search0turn812816search1
+
+Run:
+
+```powershell
+git pull
+npm run lint:types
+npm test
+```
+
+If your preview is still running, it should hot-reload; otherwise restart:
+
+```powershell
+canva apps start --preview
+```
+
+Then do:
+1. **Top Queries → Import data**
+2. **Top Pages → Import data**
+3. **Trend → Import data**
+4. Refresh one of the imported linked datasets.
+
+The expected result for this brand-new property is an **empty but successfully linked table**, not an error. If Canva accepts that and refresh works, we’ve proven the core Data Connector mechanics without waiting days for real search traffic.
