@@ -144,3 +144,35 @@ So the practical order is:
 7. Save both sides, then run the Canva preview.
 
 I’ve also updated `docs/OWNER_LIVE_PROOF.md` with these exact click paths.
+
+
+## Turn 0004
+
+### User
+
+[Uploaded screenshot of Google Auth Platform → Clients → Create OAuth client ID showing a Web application client with redirect URI `https://www.canva.com/apps/oauth/authorized`.]
+
+### Assistant message 1
+
+That looks almost right. I’m checking one detail before you click **Create**: whether Canva’s current OAuth redirect is indeed the generic `https://www.canva.com/apps/oauth/authorized` shown there, or whether your app’s Auth Provider screen gives a more specific value.
+
+### Assistant message 2
+
+Yes — **if that redirect URI was copied from Canva’s `Inside Canva → Auth providers → Add provider` screen**, this Google client form is ready.
+
+Leave **Authorized JavaScript origins empty**; Canva’s servers handle the OAuth exchange, so this is not a browser-origin OAuth client. Leave **“AI-powered agent” unchecked**. You can rename `Web client 1` to something clearer like `Canva GSC Connector`.
+
+### Assistant final
+
+Yes — **if `https://www.canva.com/apps/oauth/authorized` was copied from Canva's `Inside Canva → Auth providers → Add provider` Redirect URL field**, this form is ready.
+
+On this screen:
+- **Application type:** Web application — correct.
+- **Authorized JavaScript origins:** leave empty.
+- **Authorized redirect URIs:** keep exactly `https://www.canva.com/apps/oauth/authorized` if that is what Canva displayed.
+- **AI-powered agent:** leave unchecked.
+- **Name:** optional; `Canva GSC Connector` is clearer than `Web client 1`.
+
+Then click **Create**. Google will show the Client ID and Client secret; copy those into Canva's Auth Provider form only. Do not paste the secret into chat or commit it.
+
+If you typed that redirect URI manually rather than copying it from Canva, do not click Create yet — go back to Canva's Auth Provider form and copy the read-only Redirect URL first. Canva explicitly tells developers to register that exact value with the identity provider.
