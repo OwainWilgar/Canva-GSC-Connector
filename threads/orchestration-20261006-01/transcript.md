@@ -1310,3 +1310,35 @@ Pulled latest `main` to `59d4aea`. Dependencies were already installed, so I ski
 The Canva Editor preview opened to a **Log in or sign up** page. I stopped there as instructed and left the browser tab and preview server ready for you to complete login. The selection UI, **Update data**, normal import, and connected-source refresh remain unverified.
 
 I recorded the exact results and blocker in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). The P2 gate is **not green**, so I left canonical state and task status unchanged. Once you have completed Canva login in the open tab, tell me and I can resume the remaining smoke.
+
+
+## Turn 0038
+
+### User
+
+Pulled `main` to `59d4aea`. Dependencies were already present, so I skipped installation. Typecheck passed, Jest passed **8/8 suites and 44/44 tests**, and the build passed with a 1.31 MB bundle. The preview is running at `http://localhost:8090`.
+Canva opened to a login page, so I stopped before the authenticated smoke. **Update data**, import, and refresh remain unverified. I left the browser tab and preview ready for you to sign in.
+I recorded the results in the P2 evidence file. The gate is **not green**, so canonical state remains P2. Evidence and transcript are committed and pushed as `020c58c`.
+
+### Assistant message 1
+
+Good — Codex did exactly what we wanted. The deterministic gate is fully green now; the only remaining P2 blocker is the authenticated Canva smoke. I’m syncing canonical state to that narrower boundary, then your next step is just **sign into Canva in the already-open tab and hand control straight back to Codex**.
+
+### Assistant final
+
+That is exactly the right stopping point.
+
+The deterministic P2 gate is now **green**:
+- typecheck PASS;
+- Jest **8/8 suites, 44/44 tests**;
+- build PASS;
+- preview startup PASS;
+- 1.31 MB bundle.
+
+I’ve narrowed canonical state accordingly. The **only** remaining P2 blocker is the authenticated Canva smoke.
+
+Do not rerun the terminal checks unless source changes. Keep the preview/browser open, sign into Canva yourself, complete any 2FA/consent prompt, then give Codex this continuation:
+
+> Continue the existing P2 validation session from the already-running preview and signed-in Canva browser. Do not rerun typecheck/tests/build unless source changed. Perform only the remaining authenticated smoke from `docs/tasks/002-production-mvp.md`: confirm the hardened connector UI renders, edit an existing connected source and verify **Update data**, import one normal dataset, and run **Refresh Data** once. Record exact evidence. If all four are green, mark Task 002 complete and advance canonical state to **P3 — Prepare Review**. Otherwise stop on the first genuine product failure and record it.
+
+So your role now is just **sign in, then hand it back**.
