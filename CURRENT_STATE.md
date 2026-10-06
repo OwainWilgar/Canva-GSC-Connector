@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**One bounded owner-local validation batch is now required because this orchestration environment cannot install npm dependencies and the shared GitHub Actions budget is unavailable until 2026-10-10. This is technical validation only, not product review.**
+**Use Codex on the owner machine as the default P2 validator. Codex should run the local install/typecheck/test/build loop, start Canva preview, and—when Browser use is available—drive the narrow Canva Sheets smoke. Owner attention is required only for login/2FA/host approvals or other human-only account prompts, plus later subjective product review.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
