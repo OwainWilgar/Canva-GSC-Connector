@@ -38,3 +38,48 @@ Your next action is the single prepared LIVE session in `docs/OWNER_LIVE_PROOF.m
 3. Run `npm test`, `npm run lint:types`, then `canva apps start --preview`; prove property listing, Top Queries, Top Pages, Trend, and refresh. Return the Canva App ID plus pass/fail for those items and any visible error. **Do not send client secrets or tokens.**
 
 I also added the production OAuth verification requirement to the release packet: development OAuth success is not enough for public launch; Google requires verification for apps requesting scopes it classifies as sensitive or restricted, so we’ll confirm the actual classification of `webmasters.readonly` in the production Cloud project before P5. citeturn757294search0turn757294search7
+
+
+## Turn 0002
+
+### User
+
+where/when do i add npx packs execute pack.ts Transactions "2026-01-01" "2026-10-06" --maxRows=120
+
+exact redirect URL Canva gives you. - where
+
+### Assistant message 1
+
+That `npx packs execute ... Transactions ...` command does **not** belong in this Canva project; it’s a Coda Pack-style command and should not be added anywhere here.
+
+I’ll pin down the exact Canva OAuth screen/field where the redirect URL appears, then I’ll update the project bridge so the next handoff is unambiguous.
+
+### Assistant message 2
+
+The exact location is now confirmed: after the app has the Data Connector intent, open **Canva Developer Portal → your app → Inside Canva → Auth providers → Add provider**. In that dialog, Canva shows a **read-only “Redirect URL” field with a Copy button**. That is the URI you paste into Google Cloud’s OAuth client under **Authorized redirect URIs**. citeturn589373view1
+
+I’m correcting the bridge to spell out that sequence, including the small chicken-and-egg detail: create the Google Web OAuth client first, then copy Canva’s generated redirect URI back into that client.
+
+### Assistant final
+
+Don’t add `npx packs execute pack.ts Transactions "2026-01-01" "2026-10-06" --maxRows=120` anywhere in this repo. That is a **Coda Packs** command from the Paddle-style project, not a Canva command. For this project the relevant local sequence is `npm test`, `npm run lint:types`, then `canva apps start --preview`.
+
+For the redirect URL, the exact path is:
+
+**Canva Developer Portal → Google Search Console app → Inside Canva → Auth providers → Add provider**
+
+That menu appears after the app has an intent. Inside **Add provider**, Canva displays a **read-only Redirect URL** with a **Copy** button. citeturn589373view1
+
+Then go to **Google Cloud → Google Auth Platform / Clients → your Web application OAuth client → Authorized redirect URIs**, add that copied Canva URL exactly, and save it. Google requires an exact match—including scheme, path and trailing slash—or it returns `redirect_uri_mismatch`. citeturn210356search0
+
+So the practical order is:
+
+1. Create/link the Canva app and push `canva-app.json`.
+2. Create the Google **Web application** OAuth client and get its client ID/secret.
+3. Open Canva **Inside Canva → Auth providers → Add provider**.
+4. Copy Canva’s generated **Redirect URL**.
+5. Paste it into the Google client's **Authorized redirect URIs** and save.
+6. Return to Canva and finish/save the Google auth provider.
+7. Run the Canva preview proof.
+
+I’ve updated `docs/OWNER_LIVE_PROOF.md` with those exact clicks and explicitly removed any ambiguity about Coda `packs execute` commands.
