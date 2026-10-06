@@ -410,3 +410,45 @@ npx @canva/cli@latest --version
 Send me those two outputs. That will tell us whether this is just a Windows PATH issue or an npm-global installation issue.
 
 One small compatibility note: Canva currently documents **Node 24 and npm 11** for the CLI. You're on Node 24 (good) but npm 12. Don't change npm pre-emptively; try the CLI first. If Canva's CLI reports an npm-version compatibility problem, we'll pin npm 11 then. citeturn723281search0
+
+
+## Turn 0009
+
+### User
+
+[Shared Canva CLI config diff showing remote `design_editor` intent and empty runtime being replaced by local `data_connector` intent plus mandatory design read/write permissions.]
+
+### Assistant message 1
+
+This diff is exactly the conversion we expected: the newly created Canva app still has the default `design_editor` intent remotely, while the repo is declaring `data_connector`. I’m checking whether the two design-content permissions in the current Data Connector template are still required before telling you to push, because the config push is a full replacement.
+
+### Assistant message 2
+
+Yes—this diff is the one we want. Canva’s current Data Connector docs require **both** `canva:design:content:read` and `canva:design:content:write`, and their own complete `canva-app.json` example matches our local file. The push will remove the default `design_editor` intent and replace it with `data_connector`, which is intentional. citeturn600624search1turn600624search4
+
+Because `config push` is a **full replacement**, confirm only if the diff is exactly what you pasted. Your OAuth provider configuration is managed separately in the Developer Portal and is not part of `canva-app.json`. citeturn600624search3
+
+### Assistant final
+
+Yes — **confirm/apply this config push**.
+
+The diff is exactly what we want:
+- remove the default `design_editor` intent;
+- add the `data_connector` intent;
+- add Canva's required **Design read** and **Design write** permissions.
+
+Canva's current Data Connector implementation guide explicitly requires both `canva:design:content:read` and `canva:design:content:write`, and their complete Data Connector `canva-app.json` example matches our local configuration. citeturn600624search1turn600624search4
+
+So choose **Yes / Apply / Confirm** on this prompt.
+
+One important detail: `canva apps config push` is a **full replacement** of the app configuration, so we should only confirm when the diff is expected. This one is expected. Your third-party Google OAuth provider is configured separately in the Developer Portal and isn't represented in `canva-app.json`. citeturn600624search3
+
+After it succeeds, run:
+
+```powershell
+canva apps config status
+npm run lint:types
+canva apps start --preview
+```
+
+If `lint:types` is green, the next meaningful result is what happens inside the Canva preview when you click **Connect Google**.
