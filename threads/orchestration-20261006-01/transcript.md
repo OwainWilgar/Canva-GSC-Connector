@@ -881,3 +881,30 @@ Next:
 4. Click **Verify**.
 
 If Search Console says verification succeeded, tell me and we’ll immediately rerun `Sites:list` and then reconnect Canva to continue the LIVE dataset proof.
+
+
+## Turn 0023
+
+### User
+
+[Uploaded screenshot showing the verified temporary GitHub Pages Search Console property selected in Canva, with Top Queries / Last 28 days and Import data enabled.]
+
+### Assistant message 1
+
+Excellent — the proof property is now visible in Canva. That re-establishes **property discovery as LIVE-PASS**; the next click is the real Search Analytics test. I’m recording this state, then use **Top Queries → Last 28 days → Import data** exactly as shown.
+
+### Assistant final
+
+Great — **property discovery is now LIVE-PASS**.
+
+Your next click is exactly what’s on screen:
+
+**Top Queries → Last 28 days → Import data**
+
+Because this is a brand-new Search Console property, there may be no performance rows yet. That’s okay for this step. I need the exact outcome:
+
+- if data imports, send the result;
+- if you get **“No Search Console data was found…”**, send that;
+- if you get any other error, send the first visible error.
+
+Then we’ll repeat the same check for **Top Pages** and **Trend**.
