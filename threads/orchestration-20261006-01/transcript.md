@@ -1070,3 +1070,31 @@ refresh data needs canva business. Any way around that?
 No supported app-code bypass exists for Canva's native Sheets refresh plan entitlement. Current Canva documentation says data connectors in Canva Sheets are available on Canva Business and Enterprise. This is therefore recorded as a platform entitlement gate, not a connector failure.
 
 Recommended choices: use the Business trial/qualified seat to close the native refresh proof now, or continue engineering and make native refresh on a qualified account a mandatory P3/pre-release gate. Do not build custom refresh machinery merely to evade Canva's subscription boundary.
+
+
+## Turn 0032
+
+### User
+
+[Uploaded screenshot showing Canva Edit data panel with Refresh Data available after starting a Business trial; fixture row contains a current timestamp and Last updated time. User: "got trial, refreshed:"]
+
+### Assistant message 1
+
+That closes the refresh gate. The screenshot shows Canva’s connected-data panel with **Refresh Data** available and the fixture row carrying a fresh timestamp after refresh, so the saved-reference → `getDataTable` replay is now LIVE-PASS. I’m recording that, removing the P1-only fixture immediately as promised, and keeping P1 open only for the two remaining live dataset shapes: **Top Pages** and **Trend**.
+
+### Assistant final
+
+That closes the refresh gate.
+
+The screenshot shows Canva's connected-data panel with **Refresh Data**, a fresh fixture timestamp in the row, and a matching **Last updated** time. So Canva successfully replayed the saved data-source reference into our connector: **native refresh is LIVE-PASS**.
+
+I've already removed the P1-only fixture from `main`; it no longer exists in the product path.
+
+We only have **two final P1 LIVE checks** left:
+
+1. Select **Top Pages** → Import data.
+2. Select **Trend** → Import data.
+
+Because the proof property is brand new, both may be empty. That's fine. I only need to know whether each completes **without an error**.
+
+If both pass, I'll close Task 001, write the final LIVE proof memo, move `CURRENT_STATE.md` to **P2 — Build**, and activate Task 002.
