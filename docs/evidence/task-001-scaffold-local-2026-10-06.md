@@ -382,3 +382,25 @@ Decision options:
 2. **Factory exception:** continue implementation without starting a paid/trial entitlement; retain native Canva refresh as a mandatory P3/pre-release gate, supported meanwhile by Canva's documented refresh contract plus deterministic data-reference/fixture tests.
 
 This entitlement does not change the target-market thesis because the product is already intentionally aimed at plan-qualified Canva users.
+
+
+## LIVE native refresh update — PASS
+
+Observed:
+- Canva Business trial enabled the native connected-data refresh control;
+- the non-empty P1 fixture imported as a connected dataset;
+- Canva showed the connected source in **Edit data** with **Refresh Data**;
+- after refresh, the fixture row carried a fresh invocation timestamp and Canva showed a matching **Last updated** time.
+
+Conclusion:
+- Canva saved the data source reference and replayed it into `getDataTable` on refresh;
+- native connected-data refresh is **LIVE-PASS**;
+- no custom backend or custom refresh mechanism is required.
+
+Cleanup:
+- the P1-only refresh fixture has now been removed from source, UI, data-ref types and tests;
+- no synthetic dataset remains in the product path.
+
+Remaining P1 LIVE checks:
+- Top Pages import completes cleanly;
+- Trend import completes cleanly.
