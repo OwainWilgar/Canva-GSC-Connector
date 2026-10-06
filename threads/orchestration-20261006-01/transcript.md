@@ -777,3 +777,47 @@ Authorize the explorer with that account and run it. Then tell me which of these
 - **C: 401/403/error** → send the error text; that becomes the next diagnostic.
 
 Google documents that `sites.list` returns the Search Console sites accessible to the current authorized user, including permission levels, so this test cleanly separates the two sides. citeturn680588search0turn680588search8
+
+
+## Turn 0018
+
+### User
+
+[Uploaded screenshot of Google's Sites:list API Explorer returning HTTP 200 with an empty JSON object.]
+
+### Assistant message 1
+
+That result is decisive: **Google itself returned HTTP 200 with `{}`**, so the connector is not causing the empty property list. The OAuth request is valid, but the Google account used by the API Explorer currently has **zero Search Console properties visible to the API**. I’m recording that as the current LIVE blocker; no more connector changes are warranted until the proof account/property is corrected.
+
+### Assistant message 2
+
+That `200 {}` isolates the problem cleanly: **Google’s own Search Console API sees zero properties for the account used in the explorer**. So this is now an account/property-access issue, not a Canva bug. I’m updating the project state accordingly; the next fix is in Search Console permissions/account selection, not code.
+
+### Assistant final
+
+That `200 {}` is the key result: **Google itself sees zero Search Console properties for the account currently authorized in the API Explorer.** So the empty Canva dropdown is behaving consistently with Google's API; this is not a connector-code problem.
+
+Next, open Google Search Console in the same browser and check the account in the top-right. Then check the property selector:
+
+1. If the expected property is **not there**, switch to the Google account that owns/has access to it.
+2. If the expected property **is there under a different account**, use that same account in both the API Explorer and Canva.
+3. If you want to keep using the current proof account, grant it access to a non-sensitive Search Console property from that property's **Settings → Users and permissions**. For the proof, **Full** access is simplest.
+
+Then rerun **Sites: list** in the API Explorer. Do not go back to Canva until the response contains a non-empty `siteEntry`.
+
+Once you get something like:
+
+```json
+{
+  "siteEntry": [
+    {
+      "siteUrl": "...",
+      "permissionLevel": "..."
+    }
+  ]
+}
+```
+
+retry **Switch Google account** in Canva with that exact same account. At that point the property selector should populate, and we can move straight on to Top Queries / Top Pages / Trend.
+
+I’ve updated P1 state to reflect that the blocker is now **Search Console account/property access**, not Canva OAuth or connector code.
