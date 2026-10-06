@@ -1367,3 +1367,40 @@ The Canva selection UI rendered and showed the selected property, **Top Queries*
 The current design had an empty sheet and offered **Import data**; no existing connected source was available to verify **Update data**. I stopped at the import failure as instructed, so **Update data** and **Refresh Data** remain unverified. Task 002 stays active and canonical state remains P2.
 
 I recorded the exact outcome in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). No local validation was rerun because source had not changed.
+
+
+## Turn 0039
+
+### User
+
+The connector selection UI rendered with the selected property, **Top Queries**, rolling **Last 28 days**, the 100-row cap, and top-row disclosure.
+The normal import failed with: “Could not save this Search Console selection in Canva. Try again.” The open design had an empty sheet and offered **Import data**; no existing connected source was available to verify **Update data**. I stopped at the import failure, so refresh was not attempted.
+Task 002 remains active and canonical state remains P2. I recorded the outcome in the evidence file and pushed it with the transcript update as `86aceed`. No local checks were rerun.
+
+### Assistant message 1
+
+This is a useful failure: the hardened UI itself is fine, and the break is now isolated to **`updateDataRef` during a fresh import**. Because the error came from our generic `catch`, Canva is throwing before it returns one of the normal connector statuses. I’m checking the current Data Connector contract against Canva’s starter now and I’ll patch the smallest compatibility issue rather than touching Google/API code.
+
+### Assistant message 2
+
+The current Canva docs narrow this quite a lot: `updateDataRef` throws a `bad_request` when the source/title violates its size contract or when the completed `DataTable` is invalid/exceeds Canva’s limit. Our source is tiny and the title is capped, so the next useful evidence is the host error code plus the returned table’s **row/column/limit summary**—not another speculative rewrite.
+
+I’m adding a temporary, non-sensitive diagnostic trace now. It logs only counts, limits, and Canva’s error name/code/message—never the property, queries, token, or row contents. Then Codex can reproduce the import in the still-authenticated session and tell us exactly which contract Canva is rejecting.
+
+### Assistant final
+
+This is now isolated enough to diagnose cleanly.
+
+The LIVE results are:
+- hardened selection UI: **PASS**;
+- fresh import: **FAIL inside Canva `updateDataRef`**;
+- **Update data**: not testable yet because no connected source exists;
+- refresh: downstream-blocked by the failed import.
+
+Canva's current contract says `updateDataRef` throws when the source/title exceeds its limits or when the completed DataTable is invalid/over the supplied limits. Our source is small and titles are capped, so I've added temporary safe diagnostics for the remaining possibilities. They log only sizes, row/column counts, limits, dataset kind, and Canva's error code/message—never tokens, properties, or row contents. citeturn349455search0
+
+Hand the still-authenticated session back to Codex with:
+
+> Pull latest main. Because diagnostic source changed, run `npm run lint:types` and `npm test`; do not redo unrelated validation. Keep/restart the existing Canva preview as needed. In the authenticated Canva session, reproduce exactly one **Top Queries → Import data** attempt. Capture the two console entries beginning `[GSC connector]` plus the exact visible error. Do **not** make speculative fixes after reproducing; stop and report those diagnostics back to the orchestration thread.
+
+I've updated `CURRENT_STATE.md`, Task 002, and the P2 evidence memo to make this the only active diagnostic. If the Canva session is still live, you shouldn't need to do anything yourself.
