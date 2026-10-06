@@ -360,3 +360,25 @@ Next:
 - run typecheck/tests;
 - import **Refresh Fixture (P1 only)** in Canva Sheets;
 - finish import, select the resulting connected range, refresh it, and confirm the timestamp changes.
+
+
+## LIVE Canva entitlement gate — native refresh
+
+Observed:
+- the P1 Refresh Fixture imports successfully as a non-empty connected dataset;
+- Canva blocks the native Sheets refresh action on the current account and requires Canva Business.
+
+Current Canva product docs:
+- Canva Sheets data connectors are available on Canva Business and Canva Enterprise;
+- linked connector data is refreshed by Canva by replaying the saved data source reference into the connector's data-fetch path.
+
+Interpretation:
+- the current blocker is a **Canva subscription entitlement**, not connector architecture, OAuth, Google API access, data shaping, or saved-reference design;
+- there is no supported app-code bypass for Canva's native refresh entitlement;
+- do not add custom refresh machinery just to bypass Canva's product gate.
+
+Decision options:
+1. **Full LIVE closure now:** use a qualified Canva Business/Enterprise account or the offered Business trial, refresh the P1 fixture, confirm its timestamp changes, then remove the fixture.
+2. **Factory exception:** continue implementation without starting a paid/trial entitlement; retain native Canva refresh as a mandatory P3/pre-release gate, supported meanwhile by Canva's documented refresh contract plus deterministic data-reference/fixture tests.
+
+This entitlement does not change the target-market thesis because the product is already intentionally aimed at plan-qualified Canva users.
