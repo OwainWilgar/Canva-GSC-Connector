@@ -151,25 +151,36 @@ Prefer one prepared local/Codex implementation/test loop.
 
 Executor should continue through ordinary compile/test failures and obvious fixes rather than returning after each one.
 
-## Validation gate
+## Validation gate — Codex-first
 
-Run from the latest `main` on the already configured owner machine:
+Run this as one Codex task against the local repository on the already configured owner machine.
 
-```bash
-git pull
-npm install
-npm run lint:types
-npm test
-npm run build
-```
+Codex owns:
+- `git pull`;
+- `npm install` when dependency state requires it;
+- `npm run lint:types`;
+- `npm test`;
+- `npm run build`;
+- ordinary diagnosis/fix/rerun loops;
+- `canva apps start --preview`;
+- local console/build-log inspection.
 
-If those pass, run the narrow Canva smoke:
-1. start preview;
-2. open the connector in Canva Sheets;
+When Codex Browser use is available on desktop, Codex should also own the narrow Canva smoke:
+1. open Canva Sheets;
+2. open the Google Search Console draft connector;
 3. confirm the hardened selection UI renders;
 4. edit an existing connected source and confirm **Update data** appears;
 5. import one normal dataset;
-6. refresh that connected source once.
+6. refresh that connected source once;
+7. capture the result/error and relevant console/network evidence when useful.
+
+Owner attention is reserved for:
+- login/password/2FA steps;
+- explicit browser/website access approvals;
+- Google/Canva consent prompts that require the account holder;
+- later subjective product/UX review.
+
+If Browser use is unavailable, only the authenticated Canva smoke remains manual; all terminal validation still belongs to Codex.
 
 This is technical validation only. Do not turn it into owner product review.
 
