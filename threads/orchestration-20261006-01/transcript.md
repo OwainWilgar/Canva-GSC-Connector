@@ -857,3 +857,27 @@ Your only manual step now is:
 7. For verification, choose **HTML tag**. Google will give you a `<meta name="google-site-verification" ...>` tag. Send me that tag and I’ll add it to the proof page’s `<head>`; then you click **Verify**. Google explicitly supports HTML-tag verification for URL-prefix properties. citeturn181967search1
 
 This gets us a real property without buying a domain or setting up another hosting account. It may have zero search traffic initially, but that is still enough to continue proving the real API/request/refresh path; non-zero historical rows can remain a later release-quality gate.
+
+
+## Turn 0022
+
+### User
+
+<meta name="google-site-verification" content="8pqdncIEfwSyC5R4GlBEKW7ISuFIC3lIi4-IPtlhvMo" />
+
+### Assistant message 1
+
+Perfect — that verification tag is meant to be public, so it’s safe to add to the proof page. I’m inserting it into the `gh-pages` site now and recording this turn; once GitHub Pages redeploys, you can click **Verify** in Search Console.
+
+### Assistant final
+
+Added. The verification tag is now committed to the `gh-pages` branch.
+
+Next:
+
+1. Wait for GitHub Pages to redeploy the site (usually a minute or two).
+2. Open `https://owainwilgar.github.io/Canva-GSC-Connector/`.
+3. View page source or just retry verification in Search Console.
+4. Click **Verify**.
+
+If Search Console says verification succeeded, tell me and we’ll immediately rerun `Sites:list` and then reconnect Canva to continue the LIVE dataset proof.
