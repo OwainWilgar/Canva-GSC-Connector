@@ -1057,3 +1057,16 @@ Then, in the Canva Sheet:
 7. Confirm the timestamp changes.
 
 If the timestamp changes, refresh is proven. I’ll then remove the fixture before moving the project into P2.
+
+
+## Turn 0031
+
+### User
+
+refresh data needs canva business. Any way around that?
+
+### Assistant
+
+No supported app-code bypass exists for Canva's native Sheets refresh plan entitlement. Current Canva documentation says data connectors in Canva Sheets are available on Canva Business and Enterprise. This is therefore recorded as a platform entitlement gate, not a connector failure.
+
+Recommended choices: use the Business trial/qualified seat to close the native refresh proof now, or continue engineering and make native refresh on a qualified account a mandatory P3/pre-release gate. Do not build custom refresh machinery merely to evade Canva's subscription boundary.
