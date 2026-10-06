@@ -986,3 +986,26 @@ Then test **Top Pages → Import data** and **Trend → Import data**. Empty tab
 After that, refresh one linked source in Canva. In Canva Sheets the documented path is **Edit data → Refresh** for connected data. citeturn797255search3turn797255search0
 
 If Top Pages and Trend both behave like Top Queries and the refresh completes without error, the core P1 mechanics are effectively proven; the only missing evidence will be non-zero real GSC rows, which we can move to a later pre-release gate rather than hold up architecture.
+
+
+## Turn 0027
+
+### User
+
+[Uploaded screenshot showing the connector import/configuration view still open, with a Done button in the top-right; user asks: "here? no optino"]
+
+### Assistant message 1
+
+Yes — this screenshot explains it. You’re still **inside the connector’s selection/import view**, so there is no connected-range toolbar yet. The next step is to click **Done** in the top-right to exit this panel and return to the sheet; only then can Canva expose actions for the linked data source. I’m checking the exact refresh affordance in the current UI before I give you the next click.
+
+### Assistant final
+
+Yes — **click Done in the top-right first**. You are still inside Canva's import/configuration view. Canva's current Sheets flow is: configure the third-party dataset → **Done** → Canva syncs it into the sheet. citeturn835666search0
+
+After clicking **Done**:
+
+1. You should be back in the normal sheet.
+2. Click anywhere in the imported connected data range.
+3. Look for **Edit data** in the contextual toolbar, then **Refresh**. Canva documents connected-data refresh as **Edit data → Refresh**. citeturn835666search1turn835666search6
+
+One important caveat: because this dataset has **zero rows**, Canva may not create a selectable connected range at all. If you click **Done** and the sheet remains completely blank with no linked range / no **Edit data** option, send me that screen. That would mean zero-row data is enough to prove the API/import path, but **not enough to exercise Canva's refresh UI**, and we'll use a separate fixture-backed refresh proof instead of waiting days for Google traffic.
