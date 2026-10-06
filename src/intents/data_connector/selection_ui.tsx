@@ -9,6 +9,7 @@ import type { RenderSelectionUiRequest } from "@canva/intents/data";
 import { useEffect, useMemo, useState } from "react";
 import {
   authorizeGoogle,
+  disconnectGoogle,
   getGoogleAccessToken,
 } from "../../auth/google";
 import {
@@ -62,12 +63,12 @@ export function SelectionUi({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function loadProperties() {
+  async function loadProperties(forceRefresh = false) {
     setLoading(true);
     setError(null);
 
     try {
-      const token = await getGoogleAccessToken();
+      const token = await getGoogleAccessToken(forceRefresh);
 
       if (!token?.token) {
         setAuthorized(false);
@@ -93,6 +94,32 @@ export function SelectionUi({
   useEffect(() => {
     void loadProperties();
   }, []);
+
+  async function reconnectGoogle() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await disconnectGoogle();
+      setAuthorized(false);
+      setProperties([]);
+      setProperty("");
+
+      const result = await authorizeGoogle();
+      if (result.status === "completed") {
+        await loadProperties(true);
+      } else {
+        setLoading(false);
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Could not reconnect Google.",
+      );
+      setLoading(false);
+    }
+  }
 
   async function connectGoogle() {
     setLoading(true);
@@ -162,6 +189,29 @@ export function SelectionUi({
         </Text>
         <Button variant="primary" onClick={connectGoogle}>
           Connect Google
+        </Button>
+        {error ? <Text>{error}</Text> : null}
+      </Rows>
+    );
+  }
+
+  if (authorized && properties.length === 0) {
+    return (
+      <Rows spacing="2u">
+        <Text>
+          Google is connected, but Search Console returned no properties for
+          this account.
+        </Text>
+        <Button
+          variant="primary"
+          onClick={() => {
+            void loadProperties(true);
+          }}
+        >
+          Retry
+        </Button>
+        <Button variant="secondary" onClick={reconnectGoogle}>
+          Switch Google account
         </Button>
         {error ? <Text>{error}</Text> : null}
       </Rows>
