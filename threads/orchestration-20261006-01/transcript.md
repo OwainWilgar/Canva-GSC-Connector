@@ -1263,3 +1263,50 @@ A good single Codex prompt for this project is:
 > Work through the P2 validation gate in `docs/tasks/002-production-mvp.md` autonomously. Pull latest main, install only if needed, run typecheck/tests/build, fix ordinary failures and rerun until green. Then start the Canva preview and, using Browser/Chrome if available, perform the narrow authenticated Canva Sheets smoke specified in the task. Stop only for login/2FA/consent or another genuine human-only account prompt. Record exact validation evidence in `docs/evidence/task-002-production-mvp-2026-10-06.md` and update canonical state only if the gate is genuinely green.
 
 That should reduce your role to approving/signing in once or twice rather than manually validating each step.
+
+
+## Turn 0037
+
+### User
+
+pull then Work through the P2 validation gate in `docs/tasks/002-production-mvp.md` autonomously. Pull latest main, install only if needed, run typecheck/tests/build, fix ordinary failures and rerun until green. Then start the Canva preview and, using Browser/Chrome if available, perform the narrow authenticated Canva Sheets smoke specified in the task. Stop only for login/2FA/consent or another genuine human-only account prompt. Record exact validation evidence in `docs/evidence/task-002-production-mvp-2026-10-06.md` and update canonical state only if the gate is genuinely green.
+
+### Assistant message 1
+
+I’ll read the relay inbox and P2 gate packet first, then pull `main`, validate locally, and attempt the authenticated Canva smoke in the browser. I’ll record the evidence and only advance canonical state if every required gate passes.
+
+### Assistant message 2
+
+The checkout is already on `main` and matches its cached `origin/main` commit (`d04467e`), but `git fetch` could not update `.git/FETCH_HEAD` because Git metadata is read-only in this workspace sandbox. I’ll request the narrowly scoped repository write needed to complete the requested pull; I’ll keep the existing untracked `package-lock.json` intact.
+
+### Assistant message 3
+
+The fast-forward pull brought in commit `59d4aea`, including the updated gate packet and the stale test expectation fix. Dependencies are already complete (`npm ls --depth=0` succeeds), so an install is unnecessary; I’m starting the required typecheck, tests, and build now.
+
+### Assistant message 4
+
+Typecheck passes. Jest is failing before test discovery because Node’s `realpath` call on the sandbox temp directory returns `EPERM`; redirecting temp into the repository hits the same restriction. I’ll retry the test runner with the approved execution boundary, then proceed to the build and preview.
+
+### Assistant message 5
+
+All 8 test suites and 44 tests pass after running Jest with the needed filesystem access. The Canva CLI build has not emitted output and is still running, so I’m checking the process and build log before deciding whether it needs an ordinary rerun or a direct local CLI invocation.
+
+### Assistant message 6
+
+The build passed with the CLI fetched through `npx`; it produced a 1.31 MB app bundle. The CLI emitted its standard `BACKEND_HOST=localhost` publishing warning, which does not fail the local build. I’m starting preview next, then I’ll check whether Browser/Chrome can reach the signed-in Canva workspace for the smoke.
+
+### Assistant message 7
+
+The preview server is ready at `http://localhost:8090`. Canva redirected its preview URL to “Log in or sign up,” so the authenticated Sheets smoke cannot proceed without the account holder’s login; I stopped at that human-only prompt and left the tab and preview ready for handoff. I’m recording the exact local results and this blocker in the evidence file; the gate is not green, so canonical stage/status will stay P2.
+
+### Assistant message 8
+
+The evidence update is written and `git diff --check` is clean. I’m checking the repository’s long-running thread relay instructions before wrapping up, since the latest pull includes orchestration transcript updates.
+
+### Assistant final
+
+Pulled latest `main` to `59d4aea`. Dependencies were already installed, so I skipped `npm install`. Typecheck passed; Jest passed **8/8 suites and 44/44 tests**; the Canva build passed and produced a 1.31 MB bundle. Preview is running at `http://localhost:8090`.
+
+The Canva Editor preview opened to a **Log in or sign up** page. I stopped there as instructed and left the browser tab and preview server ready for you to complete login. The selection UI, **Update data**, normal import, and connected-source refresh remain unverified.
+
+I recorded the exact results and blocker in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). The P2 gate is **not green**, so I left canonical state and task status unchanged. Once you have completed Canva login in the open tab, tell me and I can resume the remaining smoke.

@@ -118,6 +118,32 @@ This is validation, not owner product review.
 
 > **Implementation complete enough for executable validation. Do not move to P3 until typecheck/tests/build and the narrow Canva smoke pass are green.**
 
+## Owner-machine validation run — 2026-10-06
+
+### Checkout and dependencies
+
+- Ran `git pull --ff-only origin main` on branch `main`.
+- Pull fast-forwarded `d04467e` to `59d4aea` (`Record orchestration turn 0034` → current `origin/main`).
+- `npm ls --depth=0` completed successfully with all declared dependencies present; `npm install` was skipped because dependency state was complete.
+- `package-lock.json` was already untracked before this run and was left untouched.
+
+### Deterministic validation
+
+- `npm run lint:types` — **PASS** (`tsc --noEmit`, exit 0).
+- `npm test` — first sandboxed attempt stopped before Jest discovery with `EPERM` resolving the sandbox temp directory. Retried with the approved execution boundary: **PASS**, 8/8 suites and 44/44 tests.
+- `npm run build` — first sandboxed attempt could not resolve `@canva/cli` because registry DNS was unavailable in the sandbox. Retried with the approved execution boundary: **PASS**. Canva CLI 1.1.2 built `dist/app.js` (1.31 MB, under the 5 MB limit) and `dist/messages_en.json` (2 bytes, under the 1 MB limit). The CLI emitted its non-blocking publish warning that `BACKEND_HOST` is `localhost`.
+
+### Preview and authenticated Canva smoke
+
+- Started preview with `npx @canva/cli apps start --preview --override-frontend-port 8090` — **PASS**, ready at `http://localhost:8090`; Canva Editor preview URL was `https://www.canva.com/login/?redirect=%2Fdevelopers%2Fapp%2FAAHOGJuURaw%2Fpreview%3Fintent%3Ddata_connector%26surface%3Deditor`.
+- Ports 8080 and 8081 were already occupied by existing Node processes, so the preview used 8090. Those processes were left untouched.
+- Opened the Canva Editor preview URL in the Codex in-app browser. Canva displayed **“Log in or sign up in seconds”** with login options. Stopped before entering credentials or continuing through an account flow.
+- Selection UI, **Update data**, normal import, and connected-source refresh are **NOT RUN**. They require the owner to complete Canva login (and any subsequent 2FA or Google/Canva consent prompt).
+
+### Gate decision
+
+**P2 validation gate: NOT GREEN — awaiting authenticated Canva smoke.** Typecheck, tests, build and preview startup passed, but the required authenticated UI/import/refresh checks have no evidence yet. `CURRENT_STATE.md` and task status remain unchanged; do not advance to P3 until the remaining smoke is completed and recorded.
+
 
 ## Owner-local validation update — deterministic suite
 
