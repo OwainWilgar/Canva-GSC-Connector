@@ -189,3 +189,30 @@ Next:
 - add the exact proof Google account as a test user;
 - retry Google authorization;
 - then validate return-to-Canva, property listing and direct GSC API access.
+
+
+## LIVE OAuth/property update — PASS
+
+Observed:
+- Google OAuth completed successfully after the proof account was added as a test user.
+- Canva returned to the connector.
+- real Search Console properties appeared in the property selector.
+
+P1 implications:
+- Canva-managed Google OAuth is **PASS** for the proof account.
+- the app can retrieve a current Google access token from Canva.
+- direct browser/iframe access to the Search Console **Sites list** endpoint works in the real Canva runtime.
+- property discovery/selection is **PASS**.
+- no backend is required for auth or property listing.
+
+Still open:
+- Search Analytics POST from the Canva runtime;
+- Top Queries import;
+- Top Pages import;
+- Trend import;
+- saved-reference refresh;
+- one recovery/failure path after successful auth;
+- representative larger-result behavior.
+
+Current decision:
+> **Continue P1; the remaining architecture-defining question is Search Analytics + refresh, not OAuth.**
