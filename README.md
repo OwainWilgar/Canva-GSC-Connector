@@ -57,6 +57,7 @@ Google explicitly does **not** promise exhaustive Search Analytics rows. The pro
 - [ARCHITECTURE.md](ARCHITECTURE.md)
 - [docs/FACTORY.md](docs/FACTORY.md)
 - [docs/SCENARIO_CONTRACTS.md](docs/SCENARIO_CONTRACTS.md)
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md)
 - [docs/tasks/001-canva-gsc-proof.md](docs/tasks/001-canva-gsc-proof.md)
 - [docs/tasks/002-production-mvp.md](docs/tasks/002-production-mvp.md)
 - [docs/launch/RELEASE_PACKET.md](docs/launch/RELEASE_PACKET.md)
