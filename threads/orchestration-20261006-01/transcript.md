@@ -176,3 +176,28 @@ On this screen:
 Then click **Create**. Google will show the Client ID and Client secret; copy those into Canva's Auth Provider form only. Do not paste the secret into chat or commit it.
 
 If you typed that redirect URI manually rather than copying it from Canva, do not click Create yet — go back to Canva's Auth Provider form and copy the read-only Redirect URL first. Canva explicitly tells developers to register that exact value with the identity provider.
+
+
+## Turn 0005
+
+### User
+
+[Uploaded screenshot of Canva Developer Portal URL Configuration asking for Authorisation server URL and Token exchange URL.]
+
+### Assistant final
+
+Enter these exact values:
+
+Authorisation server URL:
+https://accounts.google.com/o/oauth2/v2/auth
+
+Token exchange URL:
+https://oauth2.googleapis.com/token
+
+Then scroll down. Redirect URL should stay as Canva's read-only value shown earlier:
+https://www.canva.com/apps/oauth/authorized
+
+If the form shows Revocation exchange URL, use:
+https://oauth2.googleapis.com/revoke
+
+Use Credential transfer mode = Body, PKCE = enabled, and Multi-account = off for this proof.
