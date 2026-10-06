@@ -256,3 +256,24 @@ Next diagnostic:
 - use Google's official **Sites: list** API Explorer while signed into the exact same Google account;
 - if API Explorer returns `siteEntry`, investigate Canva OAuth/account binding;
 - if API Explorer returns no `siteEntry`, investigate Search Console account/property permissions rather than Canva code.
+
+
+## LIVE isolation result — Google API Explorer
+
+Observed:
+- official Search Console **Sites:list** API Explorer returned HTTP **200**;
+- response body was `{}`;
+- OAuth 2.0 was enabled in the explorer.
+
+Interpretation:
+- request/auth/scope path is valid;
+- Google itself sees **zero Search Console properties** for the account used in that API Explorer session;
+- the Canva connector's empty property list is therefore consistent with Google's authoritative API response;
+- do not change connector architecture/code further for this symptom.
+
+Current blocker:
+- identify/use a Google account that actually has Search Console access, or grant the current proof account access to a suitable non-sensitive property.
+
+Resume condition:
+- rerun Sites:list in API Explorer and confirm a non-empty `siteEntry`;
+- then retry the same account in Canva and continue to Search Analytics dataset/refresh proof.
