@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session is in progress. OAuth passes; a temporary GitHub Pages proof site is prepared. Owner action: enable Pages from `gh-pages`, then verify the resulting URL-prefix property in Search Console.**
+**The owner-authenticated LIVE session is in progress. OAuth passes; a temporary GitHub Pages proof site is prepared. GitHub Pages proof site is prepared and the Search Console verification meta tag is now deployed on `gh-pages`. Owner action: wait for Pages to redeploy, then click Verify in Search Console.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
