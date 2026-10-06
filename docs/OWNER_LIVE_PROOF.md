@@ -63,15 +63,34 @@ Create/use a **development/testing** Google Cloud project for this proof.
 4. Use an external/testing audience unless an internal Workspace-only proof is intentional.
 5. Add the Google account used for LIVE proof as a test user when Google requires it.
 6. Create an OAuth client of type **Web application**.
+7. Keep that Google OAuth client's edit page open; you will add Canva's redirect URI to it in the next section.
 
 Use a non-sensitive Search Console property for the proof.
 
-## D. Canva OAuth configuration
+## D. Canva OAuth configuration and exact redirect URL
 
-In the Canva Developer Portal, configure third-party OAuth for the app.
+The redirect URL is **not** something to invent and it is **not** the Canva app URL.
 
-Use:
+After the app has the Data Connector intent/config:
 
+1. Open **Canva Developer Portal**.
+2. Open **Google Search Console**.
+3. Go to **Inside Canva → Auth providers**.
+4. Click **Add provider**.
+5. In that dialog, Canva shows a **read-only Redirect URL** field with a **Copy** button.
+6. Copy that exact URL.
+7. Go back to **Google Cloud → Google Auth Platform / Clients → your Web application OAuth client**.
+8. Add the copied value under **Authorized redirect URIs**.
+9. Save the Google client.
+10. Return to Canva's **Add provider** dialog and complete/save the provider.
+
+Google requires the redirect URI to match exactly, including scheme, case, path and trailing slash.
+
+Use these Canva provider values:
+
+- Provider: `google`
+- Client ID: from the Google Web OAuth client
+- Client secret: from the Google Web OAuth client
 - Authorization server URL: `https://accounts.google.com/o/oauth2/v2/auth`
 - Token exchange URL: `https://oauth2.googleapis.com/token`
 - Revocation exchange URL: `https://oauth2.googleapis.com/revoke`
@@ -79,9 +98,7 @@ Use:
 - PKCE: keep enabled unless Google/Canva produces concrete incompatibility
 - Multi-account: not required for P1
 
-Copy Canva's generated **Redirect URL** exactly into the Google OAuth client's authorized redirect URIs.
-
-Enter the Google OAuth client ID/secret only in the Canva Developer Portal. Never commit them.
+Enter the Google OAuth client ID/secret only in the Canva Developer Portal. Never commit or paste them into chat.
 
 The app code requests:
 - `access_type=offline`
@@ -91,7 +108,9 @@ so Canva can retain Google's refresh token when Google returns one.
 
 ## E. Run local/current-source proof
 
-From the repository:
+From the repository — **do not run any Coda Packs commands here**. In particular, do not run commands such as `npx packs execute ...`; those belong to a Coda Pack project, not this Canva app.
+
+Run:
 
 ```bash
 npm test
