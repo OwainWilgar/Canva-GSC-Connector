@@ -25,11 +25,11 @@ export function buildGscDataTable(
   rows: SearchAnalyticsRow[],
 ): DataTable {
   const dimensionLabel =
-    dataset === "top_pages"
-      ? "Page"
-      : dataset === "trend"
-        ? "Date"
-        : "Query";
+    dataset === "top_queries"
+      ? "Query"
+      : dataset === "top_pages"
+        ? "Page"
+        : "Date";
 
   return {
     columnConfigs: [
@@ -59,17 +59,3 @@ export function buildGscDataTable(
   };
 }
 
-
-export function buildRefreshProofRows(
-  now = new Date(),
-): SearchAnalyticsRow[] {
-  return [
-    {
-      keys: [`P1 refresh fixture · ${now.toISOString()}`],
-      clicks: 1,
-      impressions: 2,
-      ctr: 0.5,
-      position: 1,
-    },
-  ];
-}
