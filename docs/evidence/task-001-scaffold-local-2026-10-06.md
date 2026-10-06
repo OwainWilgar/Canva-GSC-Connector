@@ -240,3 +240,19 @@ Next:
 - confirm the exact proof account still has properties in Search Console;
 - use Retry, then Switch Google account if needed;
 - continue to Search Analytics only after property listing is stable.
+
+
+## LIVE property-list diagnostic update
+
+Observed:
+- **Retry** still returned zero properties.
+- **Switch Google account** followed by re-authorization also returned zero properties.
+
+Interpretation:
+- simple stale-token selection is now less likely;
+- next diagnostic must isolate Google account/API truth from Canva OAuth state.
+
+Next diagnostic:
+- use Google's official **Sites: list** API Explorer while signed into the exact same Google account;
+- if API Explorer returns `siteEntry`, investigate Canva OAuth/account binding;
+- if API Explorer returns no `siteEntry`, investigate Search Console account/property permissions rather than Canva code.
