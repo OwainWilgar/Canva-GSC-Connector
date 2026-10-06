@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE Google OAuth and Search Console property listing now pass. Prove Search Analytics POST for Top Queries / Top Pages / Trend, then refresh a saved data reference and capture one representative failure/scale observation.
+- **Current gate:** LIVE Google OAuth passes. Search Console property listing succeeded once but then returned an empty list on reload, so make property discovery reproducible before proceeding to Search Analytics POST / refresh proof.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
