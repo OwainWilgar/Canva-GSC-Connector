@@ -951,3 +951,38 @@ Then do:
 4. Refresh one of the imported linked datasets.
 
 The expected result for this brand-new property is an **empty but successfully linked table**, not an error. If Canva accepts that and refresh works, we’ve proven the core Data Connector mechanics without waiting days for real search traffic.
+
+
+## Turn 0025
+
+### User
+
+it gives no confirmation but no error, and an empty table
+
+### Assistant message 1
+
+That is the expected mechanics result: **no error + empty table means Canva accepted the data source and `getDataTable` completed successfully with zero rows**. The missing piece is UX—we currently clear the error but don’t show any “linked/imported” confirmation. I’m checking Canva’s current refresh flow and then I’ll patch the selection UI to make successful linking explicit before we do the refresh proof.
+
+### Assistant final
+
+That counts as **success for Top Queries**. Canva accepted the linked data source, called our `getDataTable`, and rendered the valid empty result. The lack of confirmation was just our UI.
+
+I’ve patched that on `main` so a successful link now shows:
+
+> Data source linked successfully. Canva can refresh this selection later.
+
+Canva’s current Data Connector contract confirms that `updateDataRef` stores the source reference for future refreshes, and Canva calls `getDataTable` again when the user refreshes connected data. citeturn797255search4turn797255search1
+
+Next run:
+
+```powershell
+git pull
+npm run lint:types
+npm test
+```
+
+Then test **Top Pages → Import data** and **Trend → Import data**. Empty tables with no errors are PASS for this proof property.
+
+After that, refresh one linked source in Canva. In Canva Sheets the documented path is **Edit data → Refresh** for connected data. citeturn797255search3turn797255search0
+
+If Top Pages and Trend both behave like Top Queries and the refresh completes without error, the core P1 mechanics are effectively proven; the only missing evidence will be non-zero real GSC rows, which we can move to a later pre-release gate rather than hold up architecture.
