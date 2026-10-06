@@ -16,8 +16,7 @@ export interface SearchAnalyticsRequest {
 export function dimensionsFor(dataset: DatasetKind): string[] {
   if (dataset === "top_queries") return ["query"];
   if (dataset === "top_pages") return ["page"];
-  if (dataset === "trend") return ["date"];
-  return ["query"];
+  return ["date"];
 }
 
 export function resolveDateRange(
