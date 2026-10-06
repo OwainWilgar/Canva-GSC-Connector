@@ -363,3 +363,50 @@ canva apps start --preview
 Do **not** run `npm audit fix --force` right now. The audit/deprecation warnings are not the P1 decision gate, and a forced dependency rewrite could destabilize the exact stack we’re trying to prove. I recorded the install/test/typecheck evidence in the repo.
 
 Send me the output of `npm run lint:types` after the pull. If it is clean, we continue directly into the LIVE Canva/OAuth proof.
+
+
+## Turn 0008
+
+### User
+
+canva apps doctor
+canva : The term 'canva' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ canva apps doctor
++ ~~~~~
+    + CategoryInfo          : ObjectNotFound: (canva:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+### Assistant message 1
+
+That’s just the Canva CLI not being on your PowerShell PATH yet. The fastest path is to avoid the global install entirely and run the current CLI through `npx`; I’m updating the owner bridge to make that the default fallback.
+
+### Assistant final
+
+The Canva CLI simply isn't installed globally yet. Canva's current docs still require:
+
+`npm install -g @canva/cli@latest`
+
+and then commands such as `canva login` / `canva apps doctor`. citeturn723281search0turn723281search8
+
+Run:
+
+```powershell
+npm install -g @canva/cli@latest
+canva --version
+canva login
+canva apps link
+canva apps doctor
+canva apps config status
+```
+
+If `canva --version` is still not recognized immediately after installation, **close and reopen PowerShell** and try it again. If it still fails, run:
+
+```powershell
+npm prefix -g
+npx @canva/cli@latest --version
+```
+
+Send me those two outputs. That will tell us whether this is just a Windows PATH issue or an npm-global installation issue.
+
+One small compatibility note: Canva currently documents **Node 24 and npm 11** for the CLI. You're on Node 24 (good) but npm 12. Don't change npm pre-emptively; try the CLI first. If Canva's CLI reports an npm-version compatibility problem, we'll pin npm 11 then. citeturn723281search0
