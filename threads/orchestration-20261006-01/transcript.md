@@ -646,3 +646,36 @@ After that, one of two things should happen:
 If **Connect Google** appears, click it and continue through Google sign-in. The next evidence we need is whether Canva returns you to the app and lists your Search Console properties.
 
 So for now: **click Open**, then send me the next screen or the first visible error.
+
+
+## Turn 0014
+
+### User
+
+[Uploaded screenshot of Google OAuth error: Access blocked because the app is being tested and can only be accessed by developer-approved testers; Error 403 access_denied.]
+
+### Assistant message 1
+
+This is the expected next kind of failure: Canva successfully reached Google OAuth, but Google is refusing the account before consent. I’m checking the current Google “External + Testing” test-user rules and then I’ll record this as LIVE evidence and tell you exactly what to change.
+
+### Assistant message 2
+
+The screenshot confirms the OAuth wiring itself is working: Canva launched Google’s authorization flow and Google recognized the app as an **External / Testing** OAuth client. The 403 is because the Google account you’re signing in with is **not yet on that project’s Test users list**. No verification submission is needed for this P1 proof.
+
+### Assistant final
+
+That 403 is **not a code failure**. Google is telling us the OAuth app is still in **Testing**, and the Google account you're using hasn't been allow-listed as a test user yet.
+
+Go to:
+
+`Google Cloud Console → Google Auth Platform → Audience → Test users → Add users`
+
+Add the **same Google account you're signing in with**, save it, then retry **Connect Google** in Canva. External apps in Testing mode can be used by explicitly listed test users without completing production verification. citeturn613397search0turn613397search2turn613397search7
+
+If that account is **already** listed, check two things:
+- the OAuth client Canva is using belongs to the **same Google Cloud project** whose Audience page you edited;
+- you're signing into Google with the exact test-user account you added.
+
+You do **not** need to submit the app for Google verification just to complete this P1 proof. Google explicitly allows development/testing apps to operate with test users before production verification. citeturn613397search6turn613397search7
+
+After adding the test user, retry the flow and send me the next result. The next milestone is: Google consent succeeds → Canva returns to the app → your Search Console properties appear.
