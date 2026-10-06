@@ -79,3 +79,31 @@ test("converts Trend dates to Canva date cells without fabricating dates", () =>
     value: new Date("2026-10-01T00:00:00Z").valueOf() / 1000,
   });
 });
+
+
+test("does not fabricate missing Search Console metrics as zeros", () => {
+  expect(() =>
+    buildGscDataTable("top_queries", [
+      {
+        keys: ["query"],
+        clicks: 1,
+        impressions: 10,
+        ctr: 0.1,
+      },
+    ]),
+  ).toThrow("incomplete report row");
+});
+
+test("rejects an invalid Trend date instead of emitting an invalid Canva cell", () => {
+  expect(() =>
+    buildGscDataTable("trend", [
+      {
+        keys: ["not-a-date"],
+        clicks: 1,
+        impressions: 10,
+        ctr: 0.1,
+        position: 2,
+      },
+    ]),
+  ).toThrow("invalid report date");
+});
