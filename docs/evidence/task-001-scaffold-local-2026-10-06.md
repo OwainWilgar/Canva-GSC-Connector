@@ -277,3 +277,18 @@ Current blocker:
 Resume condition:
 - rerun Sites:list in API Explorer and confirm a non-empty `siteEntry`;
 - then retry the same account in Canva and continue to Search Analytics dataset/refresh proof.
+
+
+## LIVE proof-property update — property discovery PASS
+
+Observed:
+- temporary GitHub Pages site was verified in Search Console;
+- the verified URL-prefix property now appears in the Canva connector property selector.
+
+Conclusion:
+- property discovery is reproducible and **PASS** with a known-good Search Console property;
+- prior empty-list behavior was correctly caused by an account with no properties;
+- next gate is Search Analytics POST behavior for Top Queries / Top Pages / Trend and saved-reference refresh.
+
+Caveat:
+- this newly created property may have no performance rows yet, so a clean no-data response is acceptable evidence for the request path but does not satisfy the non-empty dataset proof required before release.
