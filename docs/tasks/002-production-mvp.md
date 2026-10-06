@@ -1,7 +1,7 @@
 # Task 002 — Production-shaped Canva GSC MVP
 
 Canonical stage: **P2 — Build**  
-Status: **ACTIVE — implementation complete, validation pending**
+Status: **ACTIVE — deterministic validation passed, authenticated smoke pending**
 
 ## Outcome
 
@@ -153,17 +153,15 @@ Executor should continue through ordinary compile/test failures and obvious fixe
 
 ## Validation gate — Codex-first
 
-Run this as one Codex task against the local repository on the already configured owner machine.
+Deterministic validation is green on the owner machine:
+- typecheck PASS;
+- Jest PASS — 8/8 suites, 44/44 tests;
+- build PASS — 1.31 MB bundle;
+- preview startup PASS at localhost:8090.
 
-Codex owns:
-- `git pull`;
-- `npm install` when dependency state requires it;
-- `npm run lint:types`;
-- `npm test`;
-- `npm run build`;
-- ordinary diagnosis/fix/rerun loops;
-- `canva apps start --preview`;
-- local console/build-log inspection.
+Do not rerun these checks unless source/dependencies change.
+
+Codex now owns the remaining authenticated smoke after the owner completes Canva login in the already-open browser tab.
 
 When Codex Browser use is available on desktop, Codex should also own the narrow Canva smoke:
 1. open Canva Sheets;
