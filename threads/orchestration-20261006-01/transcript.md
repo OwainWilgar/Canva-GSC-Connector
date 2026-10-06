@@ -679,3 +679,37 @@ If that account is **already** listed, check two things:
 You do **not** need to submit the app for Google verification just to complete this P1 proof. Google explicitly allows development/testing apps to operate with test users before production verification. citeturn613397search6turn613397search7
 
 After adding the test user, retry the flow and send me the next result. The next milestone is: Google consent succeeds → Canva returns to the app → your Search Console properties appear.
+
+
+## Turn 0015
+
+### User
+
+properties appeared
+
+### Assistant message 1
+
+That clears a major P1 gate: **Canva-managed Google OAuth works and real Search Console properties can be listed**. I’m recording that as LIVE evidence now; the remaining proof is the three datasets plus refresh.
+
+### Assistant final
+
+Excellent — that means **Google OAuth + Search Console property discovery are now LIVE-PASS**.
+
+We have now proven:
+- Canva can complete Google OAuth;
+- Canva can retrieve the access token;
+- the app can call Google Search Console from the real Canva runtime;
+- property listing works;
+- no backend is needed for auth/property discovery.
+
+The next architecture-defining check is the **Search Analytics POST** itself.
+
+In the connector, use one property with real data and run these in sequence:
+1. **Top Queries → Last 28 days → Import data**
+2. **Top Pages → Last 28 days → Import data**
+3. **Trend → Last 28 days → Import data**
+4. Then refresh at least one imported dataset from Canva.
+
+If all four work, P1 is very close to passing. If anything fails, send me the **first visible error** and which dataset/action caused it.
+
+I’ve recorded OAuth + property listing as LIVE evidence and advanced the current gate accordingly.
