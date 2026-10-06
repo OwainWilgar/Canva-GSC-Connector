@@ -8,10 +8,7 @@ import type {
 import { createRoot } from "react-dom/client";
 import { getGoogleAccessToken } from "../../auth/google";
 import { querySearchAnalytics } from "../../gsc/client";
-import {
-  buildGscDataTable,
-  buildRefreshProofRows,
-} from "../../gsc/data_table";
+import { buildGscDataTable } from "../../gsc/data_table";
 import { decodeDataRef } from "../../gsc/data_ref";
 import { GscError } from "../../gsc/errors";
 import { buildSearchAnalyticsRequest } from "../../gsc/query";
@@ -21,16 +18,6 @@ const connector: DataConnectorIntent = {
   async getDataTable(request): Promise<GetDataTableResponse> {
     try {
       const ref = decodeDataRef(request.dataSourceRef.source);
-
-      if (ref.dataset === "proof_fixture") {
-        return {
-          status: "completed",
-          dataTable: buildGscDataTable(
-            ref.dataset,
-            buildRefreshProofRows(),
-          ),
-        };
-      }
 
       const token = await getGoogleAccessToken();
 
