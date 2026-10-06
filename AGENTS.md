@@ -40,12 +40,12 @@ Reuse its stage/state/evidence/thread/release discipline, not its Coda/Paddle im
 
 ## Current factory edge
 
-Canonical stage: **P1 — Prove**.
+Canonical stage: **P2 — Build**.
 
 Active task:
-- `docs/tasks/001-canva-gsc-proof.md`
+- `docs/tasks/002-production-mvp.md`
 
-P1 has a one-focused-day default budget. It exists to answer the product-defining integration/distribution mechanics cheaply.
+P1 passed on 2026-10-06. The direct no-backend Canva ↔ Google Search Console path is proven, including native saved-reference refresh. P2 now owns production-shaped UX, deterministic completeness and bounded scale/release preparation without broadening scope.
 
 ## Product contract
 
