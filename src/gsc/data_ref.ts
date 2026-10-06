@@ -14,34 +14,56 @@ export interface GscDataRef {
   searchType: "web";
 }
 
+export class DataRefError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DataRefError";
+  }
+}
+
 export function encodeDataRef(ref: GscDataRef): string {
   return JSON.stringify(ref);
 }
 
 export function decodeDataRef(source: string): GscDataRef {
-  const value: unknown = JSON.parse(source);
+  let value: unknown;
+
+  try {
+    value = JSON.parse(source);
+  } catch {
+    throw new DataRefError("Invalid data source reference");
+  }
+
   if (!value || typeof value !== "object") {
-    throw new Error("Invalid data source reference");
+    throw new DataRefError("Invalid data source reference");
   }
 
   const ref = value as Partial<GscDataRef>;
   if (ref.v !== DATA_REF_VERSION) {
-    throw new Error("Outdated data source reference");
+    throw new DataRefError("Outdated data source reference");
   }
-  if (typeof ref.property !== "string" || !ref.property) {
-    throw new Error("Missing Search Console property");
+  if (typeof ref.property !== "string" || !ref.property.trim()) {
+    throw new DataRefError("Missing Search Console property");
   }
   if (!isDatasetKind(ref.dataset)) {
-    throw new Error("Invalid dataset");
+    throw new DataRefError("Invalid dataset");
   }
   if (!isDateRangePreset(ref.dateRange)) {
-    throw new Error("Invalid date range");
+    throw new DataRefError("Invalid date range");
   }
   if (ref.searchType !== "web") {
-    throw new Error("Unsupported search type");
+    throw new DataRefError("Unsupported search type");
   }
 
-  return ref as GscDataRef;
+  // Rebuild the object instead of returning the parsed value so unknown
+  // properties (including accidental credential material) never propagate.
+  return {
+    v: DATA_REF_VERSION,
+    property: ref.property,
+    dataset: ref.dataset,
+    dateRange: ref.dateRange,
+    searchType: "web",
+  };
 }
 
 export function isDatasetKind(value: unknown): value is DatasetKind {
