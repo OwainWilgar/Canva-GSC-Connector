@@ -157,3 +157,17 @@ Fix:
 
 Next:
 - owner pulls, runs `npm install`, reruns typecheck/tests, then `canva apps start --preview`.
+
+
+## LIVE preview update — Canva app discovery
+
+Observed in Canva preview:
+- app launches into Canva successfully;
+- app details card is visible under the linked app identity;
+- Canva shows the expected design-content permission summary;
+- Open button is available.
+
+Interpretation:
+- CLI/app-scripts boot path is now working;
+- local app is discoverable by Canva under the pushed Data Connector app;
+- this is partial LIVE evidence only: connector UI and Google authorization are not yet proven until Open is clicked and the app renders.
