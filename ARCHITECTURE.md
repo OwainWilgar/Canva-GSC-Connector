@@ -1,7 +1,7 @@
 # Architecture — Canva Google Search Console Connector
 
 Updated: 2026-10-06  
-Status: provisional; P1 must confirm LIVE contracts
+Status: confirmed by P1 LIVE proof; P2 production hardening active
 
 ## Architecture principle
 
@@ -9,7 +9,7 @@ Keep v1 direct:
 
 > **Canva Data Connector intent → Canva-managed Google OAuth → Search Console API → normalized report dataset → Canva DataTable**
 
-No backend unless P1 evidence forces one.
+P1 LIVE evidence confirmed that no backend is required for the core path.
 
 ## External boundaries
 
@@ -119,7 +119,7 @@ Versioned, non-secret structure, conceptually:
 
 Prefer relative date contracts for recurring reports where that matches the selected UX, so refresh advances naturally. Use fixed dates only when the user explicitly selects a fixed historical period.
 
-P1 must confirm Canva's actual data-reference type/size contract.
+P1 confirmed saved non-secret data references and native Canva refresh replay. Keep the reference versioned and below Canva's current 5KB source limit.
 
 ## Row limits
 
@@ -131,7 +131,7 @@ Choose report-oriented defaults that:
 - are useful for charts/reports;
 - make top-row semantics clear.
 
-P1 should measure representative 100 / 1,000 / larger requests only as needed to choose the product default.
+P2 uses a report-oriented default cap of 1,000 data rows, further constrained by Canva's current surface limit. Representative larger-result behavior remains a bounded pre-release SCALE check.
 
 ## Error taxonomy
 
@@ -205,7 +205,7 @@ Let the current Canva CLI Data Connector template establish the real generated p
 
 ## Architecture revisit triggers
 
-Revisit only if LIVE proof shows:
+P1 did not trigger an architecture change. Revisit only if later evidence shows:
 - Canva OAuth cannot supply/refresh Google access cleanly;
 - GSC calls require an intermediary because of a real platform restriction;
 - data references cannot encode refresh state safely;
