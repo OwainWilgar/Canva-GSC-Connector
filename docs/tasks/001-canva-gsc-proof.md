@@ -19,15 +19,24 @@ If the same blocker survives two materially different approaches, record it and 
 
 ## First implementation step
 
-Use the **current Canva CLI Data Connector template** rather than hand-inventing SDK scaffolding:
+**Completed to the LOCAL boundary.**
+
+The repository now carries a minimal GSC implementation shaped against the current official Canva Data Connector template and its current package/API contracts.
+
+Do **not** create a second scaffold/repository now. For the real Canva app:
 
 ```bash
-canva apps create <working-app-name> --template data_connector
+canva login
+canva apps link
+npm install
+canva apps doctor
+canva apps config status
+canva apps config push
 ```
 
-Bring the generated structure into this repository while preserving the durable docs.
+Use `docs/OWNER_LIVE_PROOF.md` for the exact owner-authenticated sequence.
 
-Do not pin guessed package versions before scaffolding; the current template is the source of truth.
+The current Canva template remains the source of truth for SDK/tooling compatibility.
 
 ## Required proof
 
@@ -157,10 +166,12 @@ Escalate if:
 
 ## Owner gate
 
-Only after the harness is ready, and only if connected tooling cannot complete it, batch:
-- Google Cloud/Search Console API configuration;
-- Canva Developer Portal OAuth values;
-- one safe Search Console account/property for LIVE proof.
+**READY.** The harness/scaffold is prepared and connected tooling cannot perform the owner's Canva CLI/browser OAuth seam.
+
+Use exactly:
+- `docs/OWNER_LIVE_PROOF.md`
+
+It batches Canva app creation/linking, Google Cloud OAuth configuration, Canva OAuth configuration and the LIVE proof into one session.
 
 Never ask for secrets in chat or commit them.
 
