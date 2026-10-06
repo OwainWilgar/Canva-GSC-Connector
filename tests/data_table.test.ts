@@ -107,3 +107,26 @@ test("rejects an invalid Trend date instead of emitting an invalid Canva cell", 
     ]),
   ).toThrow("invalid report date");
 });
+
+
+test("shapes the 1000-row product boundary deterministically", () => {
+  const rows = Array.from({ length: 1_000 }, (_, index) => ({
+    keys: [`query-${index + 1}`],
+    clicks: index,
+    impressions: index + 10,
+    ctr: 0.1,
+    position: 5,
+  }));
+
+  const table = buildGscDataTable("top_queries", rows);
+
+  expect(table.rows).toHaveLength(1_000);
+  expect(table.rows[0]?.cells[0]).toEqual({
+    type: "string",
+    value: "query-1",
+  });
+  expect(table.rows[999]?.cells[0]).toEqual({
+    type: "string",
+    value: "query-1000",
+  });
+});
