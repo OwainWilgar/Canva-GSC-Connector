@@ -22,18 +22,19 @@ import {
   type DatasetKind,
   type DateRangePreset,
 } from "../../gsc/data_ref";
-
-const datasetOptions = [
-  { value: "top_queries", label: "Top Queries" },
-  { value: "top_pages", label: "Top Pages" },
-  { value: "trend", label: "Trend" },
-];
-
-const dateOptions = [
-  { value: "last_7_days", label: "Last 7 days" },
-  { value: "last_28_days", label: "Last 28 days" },
-  { value: "last_90_days", label: "Last 90 days" },
-];
+import {
+  REQUIRED_COLUMN_COUNT,
+  DEFAULT_REPORT_ROW_LIMIT,
+} from "../../gsc/limits";
+import {
+  DATASET_OPTIONS,
+  DATE_RANGE_OPTIONS,
+  dataSourceTitle,
+  datasetDescription,
+  dateRangeDescription,
+  propertyLabel,
+} from "../../gsc/presentation";
+import { GscError } from "../../gsc/errors";
 
 export function SelectionUi({
   request,
@@ -51,6 +52,22 @@ export function SelectionUi({
     }
   }, [request.invocationContext.dataSourceRef?.source]);
 
+  const contextMessage = useMemo(() => {
+    if (request.invocationContext.reason === "outdated_source_ref") {
+      return "This saved Search Console selection needs to be connected again. Choose a property and update the data source.";
+    }
+
+    if (request.invocationContext.reason === "app_error") {
+      return (
+        request.invocationContext.message ||
+        "This saved Search Console report needs attention before it can refresh."
+      );
+    }
+
+    return null;
+  }, [request.invocationContext]);
+
+  const isEditing = Boolean(request.invocationContext.dataSourceRef);
   const [properties, setProperties] = useState<GscProperty[]>([]);
   const [property, setProperty] = useState(restored?.property ?? "");
   const [dataset, setDataset] = useState<DatasetKind>(
@@ -61,12 +78,20 @@ export function SelectionUi({
   );
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [error, setError] = useState<string | null>(contextMessage);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const maxReportRows = Math.min(
+    DEFAULT_REPORT_ROW_LIMIT,
+    request.limit.row,
+  );
+  const surfaceTooNarrow =
+    request.limit.column < REQUIRED_COLUMN_COUNT || request.limit.row < 1;
 
   async function loadProperties(forceRefresh = false) {
     setLoading(true);
-    setError(null);
+    setSuccess(null);
 
     try {
       const token = await getGoogleAccessToken(forceRefresh);
@@ -80,8 +105,21 @@ export function SelectionUi({
       setAuthorized(true);
       const next = await listProperties(token.token);
       setProperties(next);
-      setProperty((current) => current || next[0]?.siteUrl || "");
+      setProperty((current) => {
+        if (current && next.some((item) => item.siteUrl === current)) {
+          return current;
+        }
+        return next[0]?.siteUrl ?? "";
+      });
     } catch (caught) {
+      if (
+        caught instanceof GscError &&
+        (caught.code === "AUTH_REQUIRED" || caught.code === "AUTH_REVOKED")
+      ) {
+        setAuthorized(false);
+        setProperties([]);
+      }
+
       setError(
         caught instanceof Error
           ? caught.message
@@ -96,9 +134,14 @@ export function SelectionUi({
     void loadProperties();
   }, []);
 
+  function clearFeedback() {
+    setError(null);
+    setSuccess(null);
+  }
+
   async function reconnectGoogle() {
     setLoading(true);
-    setError(null);
+    clearFeedback();
 
     try {
       await disconnectGoogle();
@@ -124,13 +167,13 @@ export function SelectionUi({
 
   async function connectGoogle() {
     setLoading(true);
-    setError(null);
+    clearFeedback();
 
     try {
       const result = await authorizeGoogle();
 
       if (result.status === "completed") {
-        await loadProperties();
+        await loadProperties(true);
       } else {
         setLoading(false);
       }
@@ -145,70 +188,88 @@ export function SelectionUi({
   }
 
   async function importData() {
-    setError(null);
-    setSuccess(null);
+    clearFeedback();
+    setImporting(true);
 
-    const datasetTitle =
-      dataset === "top_queries"
-        ? "Top Queries"
-        : dataset === "top_pages"
-          ? "Top Pages"
-          : "Search Trend";
-
-    const result = await request.updateDataRef({
-      source: encodeDataRef({
+    try {
+      const source = encodeDataRef({
         v: 1,
         property,
         dataset,
         dateRange,
         searchType: "web",
-      }),
-      title: datasetTitle + " · " + property,
-    });
+      });
 
-    if (
-      result.status === "app_error" ||
-      result.status === "remote_request_failed"
-    ) {
+      const result = await request.updateDataRef({
+        source,
+        title: dataSourceTitle(dataset, property),
+      });
+
+      if (result.status === "completed") {
+        setSuccess(
+          isEditing
+            ? "Selection updated. Canva will use it on the next refresh."
+            : "Data source linked. Canva can refresh this selection later.",
+        );
+        return;
+      }
+
+      if (result.status === "remote_request_failed") {
+        setError(
+          "Google Search Console could not be reached. Try again shortly.",
+        );
+        return;
+      }
+
+      if (result.status === "outdated_source_ref") {
+        setError(
+          "This saved selection needs to be connected again. Reconnect Google or choose the property again.",
+        );
+        return;
+      }
+
       setError(
-        result.status === "app_error"
-          ? result.message || "Could not preview this report."
-          : "Could not reach Google Search Console.",
+        result.message ||
+          "Search Console could not prepare this report. Review the selection and try again.",
       );
-    } else {
-      setError(null);
-      setSuccess(
-        "Data source linked successfully. Canva can refresh this selection later.",
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Could not save this Search Console selection.",
       );
+    } finally {
+      setImporting(false);
     }
   }
 
   if (loading) {
-    return <Text>Loading Search Console…</Text>;
+    return <Text>Loading Search Console properties…</Text>;
   }
 
   if (!authorized) {
     return (
       <Rows spacing="2u">
         <Text>
-          Connect Google to choose a Search Console property. This app requests
-          read-only Search Console access.
+          Connect Google to import Search Console reporting data. Access is
+          read-only; this app cannot change Search Console settings.
         </Text>
+        {error ? <Text>{error}</Text> : null}
         <Button variant="primary" onClick={connectGoogle}>
           Connect Google
         </Button>
-        {error ? <Text>{error}</Text> : null}
       </Rows>
     );
   }
 
-  if (authorized && properties.length === 0) {
+  if (properties.length === 0) {
     return (
       <Rows spacing="2u">
         <Text>
-          Google is connected, but Search Console returned no properties for
-          this account.
+          Google is connected, but this account has no Search Console
+          properties available to import.
         </Text>
+        {error ? <Text>{error}</Text> : null}
         <Button
           variant="primary"
           onClick={() => {
@@ -220,16 +281,17 @@ export function SelectionUi({
         <Button variant="secondary" onClick={reconnectGoogle}>
           Switch Google account
         </Button>
-        {error ? <Text>{error}</Text> : null}
       </Rows>
     );
   }
 
   return (
     <Rows spacing="2u">
+      {contextMessage ? <Text>{contextMessage}</Text> : null}
+
       <Text>
-        Choose the Search Console data you want to use in Canva. Query and page
-        reports contain Google&apos;s top rows for the selected period.
+        Import report-ready Search Console data. Query and page reports contain
+        Google&apos;s top rows, not an exhaustive export.
       </Text>
 
       <FormField
@@ -240,9 +302,12 @@ export function SelectionUi({
             {...props}
             options={properties.map((item) => ({
               value: item.siteUrl,
-              label: item.siteUrl,
+              label: propertyLabel(item.siteUrl),
             }))}
-            onChange={setProperty}
+            onChange={(value) => {
+              clearFeedback();
+              setProperty(value);
+            }}
             placeholder="Choose a property"
           />
         )}
@@ -254,11 +319,15 @@ export function SelectionUi({
         control={(props) => (
           <Select
             {...props}
-            options={datasetOptions}
-            onChange={(value) => setDataset(value as DatasetKind)}
+            options={[...DATASET_OPTIONS]}
+            onChange={(value) => {
+              clearFeedback();
+              setDataset(value as DatasetKind);
+            }}
           />
         )}
       />
+      <Text>{datasetDescription(dataset)}</Text>
 
       <FormField
         label="Date range"
@@ -266,18 +335,43 @@ export function SelectionUi({
         control={(props) => (
           <Select
             {...props}
-            options={dateOptions}
-            onChange={(value) => setDateRange(value as DateRangePreset)}
+            options={[...DATE_RANGE_OPTIONS]}
+            onChange={(value) => {
+              clearFeedback();
+              setDateRange(value as DateRangePreset);
+            }}
           />
         )}
       />
+      <Text>{dateRangeDescription(dateRange)}</Text>
+
+      <Text>
+        Canva will import up to {Math.max(0, maxReportRows)} data rows for this
+        selection.
+      </Text>
+
+      {surfaceTooNarrow ? (
+        <Text>
+          This Canva surface is too small for the five-column Search Console
+          report. Choose a sheet or another surface with more room.
+        </Text>
+      ) : null}
 
       <Button
         variant="primary"
-        disabled={!property}
+        disabled={!property || importing || surfaceTooNarrow}
+        loading={importing}
         onClick={importData}
       >
-        Import data
+        {isEditing ? "Update data" : "Import data"}
+      </Button>
+
+      <Button
+        variant="secondary"
+        disabled={importing}
+        onClick={reconnectGoogle}
+      >
+        Switch Google account
       </Button>
 
       {success ? <Text>{success}</Text> : null}
