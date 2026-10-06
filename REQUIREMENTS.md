@@ -1,7 +1,7 @@
 # Requirements — Canva Google Search Console Connector
 
 Updated: 2026-10-06  
-Status: proof-bound requirements
+Status: MVP-bound requirements; P1 architecture passed
 
 ## Product outcome
 
@@ -112,6 +112,11 @@ Required Google scope:
 Do not request `webmasters` write/manage scope.
 
 ## Error/recovery requirements
+
+Use Canva's native connector recovery semantics where they fit:
+- stale/revoked/inaccessible saved source → re-selection;
+- temporary/rate-limit/upstream failure → retryable remote failure;
+- invalid user selection → actionable app error.
 
 Distinguish at minimum:
 - not connected / authorization required;
