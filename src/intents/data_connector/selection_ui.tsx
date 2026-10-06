@@ -36,6 +36,14 @@ import {
 } from "../../gsc/presentation";
 import { GscError } from "../../gsc/errors";
 
+function selectionErrorMessage(
+  error: unknown,
+  fallback: string,
+): string {
+  if (error instanceof GscError) return error.message;
+  return fallback;
+}
+
 export function SelectionUi({
   request,
 }: {
@@ -114,18 +122,21 @@ export function SelectionUi({
         return next[0]?.siteUrl ?? "";
       });
     } catch (caught) {
+      setProperties([]);
+      setProperty("");
+
       if (
         caught instanceof GscError &&
         (caught.code === "AUTH_REQUIRED" || caught.code === "AUTH_REVOKED")
       ) {
         setAuthorized(false);
-        setProperties([]);
       }
 
       setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not load Search Console properties.",
+        selectionErrorMessage(
+          caught,
+          "Could not reach Google Search Console. Try again.",
+        ),
       );
     } finally {
       setLoading(false);
@@ -156,13 +167,15 @@ export function SelectionUi({
       if (result.status === "completed") {
         await loadProperties(true);
       } else {
+        setError("Google connection was not completed. Try again.");
         setLoading(false);
       }
     } catch (caught) {
       setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not reconnect Google.",
+        selectionErrorMessage(
+          caught,
+          "Could not reconnect Google. Try again.",
+        ),
       );
       setLoading(false);
     }
@@ -178,13 +191,15 @@ export function SelectionUi({
       if (result.status === "completed") {
         await loadProperties(true);
       } else {
+        setError("Google connection was not completed. Try again.");
         setLoading(false);
       }
     } catch (caught) {
       setError(
-        caught instanceof Error
-          ? caught.message
-          : "Google connection failed.",
+        selectionErrorMessage(
+          caught,
+          "Google connection failed. Try again.",
+        ),
       );
       setLoading(false);
     }
@@ -235,11 +250,9 @@ export function SelectionUi({
         result.message ||
           "Search Console could not prepare this report. Review the selection and try again.",
       );
-    } catch (caught) {
+    } catch {
       setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not save this Search Console selection.",
+        "Could not save this Search Console selection in Canva. Try again.",
       );
     } finally {
       setImporting(false);
