@@ -90,3 +90,31 @@ Still required:
 No evidence currently forces a backend.
 
 The next decision-changing evidence is the real Canva/Google LIVE lane. If direct `googleapis.com` calls fail because of CORS/CSP or OAuth behavior, revisit architecture before broadening scope.
+
+
+## Owner-local validation update — 2026-10-06
+
+Environment:
+- Node `v24.18.0`
+- npm `12.0.1`
+- `npm install` completed: 631 packages installed.
+
+Observed:
+- `npm test`: **PASS**
+- Test suites: **3/3 passed**
+- Tests: **11/11 passed**
+- `npm run lint:types`: initially exposed one implementation mismatch in `src/auth/google.ts`: Canva's current `requestAuthorization.queryParams` type expects a plain string record, while the scaffold used a `Map<string, string>`.
+
+Fix:
+- changed OAuth query params to a plain object:
+  - `access_type: "offline"`
+  - `prompt: "select_account"`
+- fix commit: `f9da19887bd2d74fea9c56038895132c82e50b93`
+
+Pending:
+- rerun `npm run lint:types` after pulling the fix.
+- continue to Canva CLI/config/LIVE proof only after typecheck is green.
+
+Install notes:
+- npm reported transitive deprecation/security warnings and blocked install scripts for `@swc/core` and `unrs-resolver`, but the Jest suite executed successfully.
+- do not run `npm audit fix --force` during P1; dependency remediation is not allowed to mutate the proof stack opportunistically.
