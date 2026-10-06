@@ -45,19 +45,13 @@ const connector: DataConnectorIntent = {
         request.signal,
       );
 
-      if (!result.rows?.length) {
-        return {
-          status: "app_error",
-          message:
-            "No Search Console data was found for this selection. Try a wider date range or another property.",
-        };
-      }
+      const rows = result.rows ?? [];
 
       return {
         status: "completed",
         dataTable: buildGscDataTable(
           ref.dataset,
-          result.rows.slice(0, reportLimit),
+          rows.slice(0, reportLimit),
         ),
       };
     } catch (error) {
