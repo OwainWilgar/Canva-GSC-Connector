@@ -8,9 +8,11 @@ import type {
 import { createRoot } from "react-dom/client";
 import { getGoogleAccessToken } from "../../auth/google";
 import { querySearchAnalytics } from "../../gsc/client";
+import { toGetDataTableError } from "../../gsc/connector_errors";
 import { buildGscDataTable } from "../../gsc/data_table";
 import { decodeDataRef } from "../../gsc/data_ref";
-import { GscError } from "../../gsc/errors";
+import { resolveReportRowLimit } from "../../gsc/limits";
+import { datasetLabel } from "../../gsc/presentation";
 import { buildSearchAnalyticsRequest } from "../../gsc/query";
 import { SelectionUi } from "./selection_ui";
 
@@ -18,26 +20,13 @@ const connector: DataConnectorIntent = {
   async getDataTable(request): Promise<GetDataTableResponse> {
     try {
       const ref = decodeDataRef(request.dataSourceRef.source);
-
       const token = await getGoogleAccessToken();
 
       if (!token?.token) {
-        return {
-          status: "app_error",
-          message: "Connect Google before importing Search Console data.",
-        };
+        return { status: "outdated_source_ref" };
       }
 
-      const availableRows = request.limit.row - 1;
-      if (availableRows < 1) {
-        return {
-          status: "app_error",
-          message:
-            "This Canva surface does not have enough rows available for this report.",
-        };
-      }
-
-      const reportLimit = Math.min(1_000, availableRows);
+      const reportLimit = resolveReportRowLimit(request.limit);
       const query = buildSearchAnalyticsRequest(ref, reportLimit);
       const result = await querySearchAnalytics(
         token.token,
@@ -47,6 +36,7 @@ const connector: DataConnectorIntent = {
       );
 
       const rows = result.rows ?? [];
+      const empty = rows.length === 0;
 
       return {
         status: "completed",
@@ -54,14 +44,15 @@ const connector: DataConnectorIntent = {
           ref.dataset,
           rows.slice(0, reportLimit),
         ),
+        metadata: {
+          description: empty
+            ? `No Search Console rows yet for ${datasetLabel(ref.dataset)} in this rolling period.`
+            : `${datasetLabel(ref.dataset)} from Google Search Console.`,
+          providerInfo: { name: "Google Search Console" },
+        },
       };
     } catch (error) {
-      const message =
-        error instanceof GscError || error instanceof Error
-          ? error.message
-          : "Search Console request failed.";
-
-      return { status: "app_error", message };
+      return toGetDataTableError(error);
     }
   },
 
