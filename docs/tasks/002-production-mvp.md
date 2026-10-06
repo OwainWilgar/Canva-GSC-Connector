@@ -1,7 +1,7 @@
 # Task 002 — Production-shaped Canva GSC MVP
 
 Canonical stage: **P2 — Build**  
-Status: **ACTIVE**
+Status: **ACTIVE — implementation complete, validation pending**
 
 ## Outcome
 
@@ -151,10 +151,35 @@ Prefer one prepared local/Codex implementation/test loop.
 
 Executor should continue through ordinary compile/test failures and obvious fixes rather than returning after each one.
 
+## Validation gate
+
+Run from the latest `main` on the already configured owner machine:
+
+```bash
+git pull
+npm install
+npm run lint:types
+npm test
+npm run build
+```
+
+If those pass, run the narrow Canva smoke:
+1. start preview;
+2. open the connector in Canva Sheets;
+3. confirm the hardened selection UI renders;
+4. edit an existing connected source and confirm **Update data** appears;
+5. import one normal dataset;
+6. refresh that connected source once.
+
+This is technical validation only. Do not turn it into owner product review.
+
 ## Handoff
 
-At completion:
-- evidence memo under `docs/evidence/`;
+Current evidence:
+- `docs/evidence/task-002-production-mvp-2026-10-06.md`
+
+After the validation gate is green:
+- mark this task complete;
 - update `CURRENT_STATE.md` to **P3 — Prepare Review**;
 - prepare the exact owner review surface;
 - do not ask the owner to debug OAuth/query mechanics.
