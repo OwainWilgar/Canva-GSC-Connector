@@ -821,3 +821,39 @@ Once you get something like:
 retry **Switch Google account** in Canva with that exact same account. At that point the property selector should populate, and we can move straight on to Top Queries / Top Pages / Trend.
 
 I’ve updated P1 state to reflect that the blocker is now **Search Console account/property access**, not Canva OAuth or connector code.
+
+
+## Turn 0021
+
+### User
+
+i dot have a site i control
+
+### Assistant message 1
+
+Then we can manufacture the missing prerequisite instead of waiting on someone else: a tiny disposable public site is enough to create and verify a Search Console property. It still won’t have historical search traffic immediately, but it lets us prove the real OAuth/property/Search Analytics/refresh mechanics. I’m checking whether your connected Vercel workspace is available so I can make that proof site without dragging you through another manual setup.
+
+### Assistant message 2
+
+No problem. We can make the proof site from the assets you already control: I’ll prepare a minimal `gh-pages` branch in this repo, so you only need to turn on GitHub Pages and then verify that URL in Search Console. That avoids buying a domain or setting up another hosting account.
+
+### Assistant message 3
+
+I’ve prepared the workaround: the repo now has a `gh-pages` branch with a minimal proof site. You don’t need to buy a domain or own another website. The only manual step I can’t do from here is enabling GitHub Pages for that branch; after that, we can add it to Search Console and continue the LIVE proof.
+
+### Assistant final
+
+No problem — I’ve prepared a temporary GitHub Pages proof site in this repo on the `gh-pages` branch.
+
+Your only manual step now is:
+
+1. Open **GitHub → OwainWilgar/Canva-GSC-Connector → Settings → Pages**.
+2. Under **Build and deployment**, choose **Deploy from a branch**.
+3. Select **`gh-pages`** and **`/(root)`**, then **Save**. GitHub supports publishing a Pages site directly from a selected branch/root. citeturn181967search0turn181967search2
+4. Wait for Pages to publish. The expected project-site URL is:
+   `https://owainwilgar.github.io/Canva-GSC-Connector/`
+5. Open that URL and make sure you see **Canva GSC Connector Proof Site**.
+6. In Search Console, add a **URL-prefix** property using that exact URL, including the final slash. citeturn181967search4
+7. For verification, choose **HTML tag**. Google will give you a `<meta name="google-site-verification" ...>` tag. Send me that tag and I’ll add it to the proof page’s `<head>`; then you click **Verify**. Google explicitly supports HTML-tag verification for URL-prefix properties. citeturn181967search1
+
+This gets us a real property without buying a domain or setting up another hosting account. It may have zero search traffic initially, but that is still enough to continue proving the real API/request/refresh path; non-zero historical rows can remain a later release-quality gate.
