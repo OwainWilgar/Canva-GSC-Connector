@@ -26,10 +26,10 @@ export function classifyHttpError(status: number): GscError {
       status,
     );
   }
-  if (status === 403) {
+  if (status === 403 || status === 404) {
     return new GscError(
       "PROPERTY_FORBIDDEN",
-      "This Google account cannot access the selected Search Console property.",
+      "This Google account cannot access the selected Search Console property. Choose an available property or reconnect Google.",
       status,
     );
   }
