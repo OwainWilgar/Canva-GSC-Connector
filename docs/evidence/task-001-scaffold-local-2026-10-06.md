@@ -171,3 +171,21 @@ Interpretation:
 - CLI/app-scripts boot path is now working;
 - local app is discoverable by Canva under the pushed Data Connector app;
 - this is partial LIVE evidence only: connector UI and Google authorization are not yet proven until Open is clicked and the app renders.
+
+
+## LIVE OAuth update — Google test-user gate
+
+Observed:
+- Canva app opened successfully.
+- Clicking the Google connection path reached Google's OAuth authorization screen.
+- Google returned `403 access_denied` with the Testing-mode message that only developer-approved testers can access the app.
+
+Interpretation:
+- Canva → Google OAuth launch wiring is working far enough to reach Google.
+- This is not evidence that verification is required for P1.
+- For an External app in Testing status, the proof account must be explicitly listed under Google Auth Platform → Audience → Test users.
+
+Next:
+- add the exact proof Google account as a test user;
+- retry Google authorization;
+- then validate return-to-Canva, property listing and direct GSC API access.
