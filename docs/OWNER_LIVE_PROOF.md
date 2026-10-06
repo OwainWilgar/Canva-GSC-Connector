@@ -35,12 +35,15 @@ From a local clone of this repository:
 nvm install 24
 nvm use 24
 npm install -g @canva/cli@latest
+canva --version
 canva login
 canva apps link
 npm install
 canva apps doctor
 canva apps config status
 ```
+
+On Windows, if `canva` is still not recognized immediately after the global install, close and reopen PowerShell, then run `canva --version` again. If it still fails, record `npm prefix -g` and inspect whether that global npm bin location is on PATH. As a one-off diagnostic, `npx @canva/cli@latest --version` can confirm the package itself runs.
 
 When `canva apps link` prompts, select the newly created **Google Search Console** app.
 
