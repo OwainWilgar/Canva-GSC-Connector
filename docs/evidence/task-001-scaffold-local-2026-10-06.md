@@ -118,3 +118,23 @@ Pending:
 Install notes:
 - npm reported transitive deprecation/security warnings and blocked install scripts for `@swc/core` and `unrs-resolver`, but the Jest suite executed successfully.
 - do not run `npm audit fix --force` during P1; dependency remediation is not allowed to mutate the proof stack opportunistically.
+
+
+## Owner-local validation update — app-scripts runtime seam
+
+Observed:
+- `npm run lint:types`: **PASS** after OAuth query-param type fix.
+- `canva apps start --preview`: did not boot; Canva CLI reported `@canva/app-scripts not found` and fell back to the project's own `start` script, creating a recursive `apps start → npm start → apps start` loop.
+
+Root cause:
+- the seeded `package.json` retained the current Canva CLI start/build scripts but omitted the current template's `@canva/app-scripts` runtime dependency.
+
+Fix:
+- restored current template runtime dependencies:
+  - `@canva/app-scripts: ^1.1.2`
+  - `@rspack/core: 2.0.8`
+- restored the Canva template override pin for `@rspack/core` and `nwsapi`.
+- fix commit: `1431eff1eea265c81d9e7e03174da3c41f02e19b`
+
+Next:
+- owner pulls, runs `npm install`, then reruns typecheck/tests and `canva apps start --preview`.
