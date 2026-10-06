@@ -20,5 +20,5 @@ test("rejects a surface with too few columns", () => {
       row: 100,
       column: REQUIRED_COLUMN_COUNT - 1,
     }),
-  ).toThrow("five-column");
+  ).toThrow("needs 5");
 });
