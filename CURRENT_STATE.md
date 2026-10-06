@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P1 — Prove**
 
 - **Stage status:** ACTIVE
-- **Current gate:** LIVE OAuth, property discovery, Search Analytics POST, and zero-row imports pass. A zero-row dataset creates no visible connected range in Canva Sheets, so a P1-only non-empty Refresh Fixture is prepared to prove saved-reference refresh independently of Google traffic.
+- **Current gate:** LIVE OAuth, property discovery, Search Analytics POST, zero-row import, and non-empty fixture import all pass. Native Canva Sheets Refresh is now blocked only by the current Canva account's Business/Enterprise entitlement; this is a platform plan gate, not a connector/API failure.
 - **Exit condition:** Canva-managed Google OAuth works; properties can be selected; Top Queries, Top Pages and Trend can each be returned as refreshable Data Connector data; permission/error/size behavior is understood; no bespoke backend is required for the core path.
 - **Next expected stage:** P2 — Build
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**The owner-authenticated LIVE session is in progress. Pull the P1 Refresh Fixture patch, run typecheck/tests, import the fixture in Canva Sheets, then refresh it and confirm the timestamp changes. Remove the fixture before P2.**
+**The owner-authenticated LIVE session has reached a Canva plan boundary. No supported code bypass exists for native Sheets refresh. Either use the offered Canva Business trial/qualified seat to close the LIVE refresh gate now, or defer that single native-UX check to P3 while continuing engineering with contract + deterministic refresh-reference evidence.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
