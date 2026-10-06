@@ -2,7 +2,9 @@
   "private": true,
   "name": "canva-gsc-connector",
   "version": "0.1.0",
-  "engines": {"node": "^22 || ^24"},
+  "engines": {
+    "node": "^22 || ^24"
+  },
   "scripts": {
     "build": "npx @canva/cli apps build",
     "lint:types": "tsc --noEmit",
@@ -29,6 +31,14 @@
     "@types/webpack-env": "1.18.8",
     "jest": "30.2.0",
     "jest-environment-jsdom": "30.2.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "@canva/app-scripts": "^1.1.2",
+    "@rspack/core": "2.0.8"
+  },
+  "overrides": {
+    "nwsapi": "2.2.24",
+    "@canva/app-scripts": {
+      "@rspack/core": "$@rspack/core"
+    }
   }
 }
