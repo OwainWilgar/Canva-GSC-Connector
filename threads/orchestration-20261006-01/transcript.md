@@ -1098,3 +1098,36 @@ We only have **two final P1 LIVE checks** left:
 Because the proof property is brand new, both may be empty. That's fine. I only need to know whether each completes **without an error**.
 
 If both pass, I'll close Task 001, write the final LIVE proof memo, move `CURRENT_STATE.md` to **P2 — Build**, and activate Task 002.
+
+
+## Turn 0033
+
+### User
+
+pass
+
+### Assistant message 1
+
+Great — that means **Top Pages and Trend both complete cleanly**, so the core P1 product path is now proven end-to-end. I’m doing the final required competitor sanity check, then I’ll close Task 001, write the LIVE proof memo, move `CURRENT_STATE.md` to **P2 — Build**, activate Task 002, and record this turn.
+
+### Assistant message 2
+
+The final competitive sanity check still supports the build: I don’t see an obvious direct **Google Search Console → Canva Data Connector** surfaced in current Canva/web results; what does surface are external automation/data tools rather than an in-Canva equivalent. That’s absence evidence, not proof of exclusivity, so we’ll recheck again before publication. I’m closing P1 and activating P2 now.
+
+### Assistant final
+
+P1 is now **closed: PASS**, and the project is in **P2 — Build**.
+
+I completed the promised transition:
+- wrote the final LIVE proof memo at `docs/evidence/task-001-canva-gsc-live-proof-2026-10-06.md`;
+- marked Task 001 **COMPLETE — PASS**;
+- activated Task 002;
+- moved `CURRENT_STATE.md`, `README.md`, and `AGENTS.md` to **P2 — Build**;
+- marked the owner LIVE bridge complete;
+- kept the temporary proof fixture removed.
+
+The architecture decision is now settled: **direct Canva → Google Search Console, Canva-managed OAuth, no bespoke backend**. Top Queries, Top Pages, Trend, and native Canva saved-reference refresh all passed.
+
+The fresh competitor check still did not surface an obvious direct in-Canva Google Search Console Data Connector. What did surface were external automation/data products, so the whitespace still looks credible—but we'll recheck again before publication rather than claim exclusivity. citeturn655854search1turn433118search5turn433118search6
+
+Next factory step is Task 002: production-shaped UX, deterministic completeness, error/reconnect states, and bounded scale evidence. No owner action is required right now.
