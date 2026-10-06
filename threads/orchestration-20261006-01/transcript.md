@@ -749,3 +749,31 @@ Because properties appeared earlier, do this in order:
    - If it is still empty, click **Switch Google account** and choose the account that actually owns/has access to the Search Console properties.
 
 I also moved P1 back from “property listing passed” to **“OAuth passed; property listing must be reproducible”**. Once the properties stay present after reload/reconnect, we continue with Top Queries / Top Pages / Trend.
+
+
+## Turn 0017
+
+### User
+
+[Uploaded screenshot of the connector empty-property state after trying Switch Google account; user says: "i tried switch, same result"]
+
+### Assistant message 1
+
+Same result after **Switch Google account** makes a simple stale-token/account-selection issue less likely. The cleanest next diagnostic is to test Google’s own `sites.list` method outside Canva with the same signed-in account; that tells us whether Google itself is returning zero properties or whether the Canva OAuth token is the mismatch.
+
+### Assistant final
+
+Same result after **Switch Google account** means we should stop changing the connector for a moment and isolate Google itself.
+
+Open Google's official **Sites: list** reference and use the **Try it!** / APIs Explorer while signed into the **same Google account** you just chose in Canva. Google's method is exactly the call our connector makes: `GET https://www.googleapis.com/webmasters/v3/sites`, using `webmasters.readonly`. citeturn680588search0turn680588search2
+
+Use this page:
+urlGoogle Search Console Sites: listhttps://developers.google.com/webmaster-tools/v1/sites/list
+
+Authorize the explorer with that account and run it. Then tell me which of these you get:
+
+- **A: response contains `siteEntry` with your properties** → Google account/permissions are fine; the problem is specifically Canva's OAuth/account binding, and I'll instrument that path next.
+- **B: response is `{}` or has no `siteEntry`** → Google itself sees zero Search Console properties for that signed-in account. Then we need to verify the exact account/property permissions in Search Console, not patch Canva.
+- **C: 401/403/error** → send the error text; that becomes the next diagnostic.
+
+Google documents that `sites.list` returns the Search Console sites accessible to the current authorized user, including permission levels, so this test cleanly separates the two sides. citeturn680588search0turn680588search8
