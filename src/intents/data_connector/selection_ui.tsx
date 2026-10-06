@@ -23,11 +23,19 @@ import {
   type DateRangePreset,
 } from "../../gsc/data_ref";
 
+const PROOF_PROPERTY =
+  "https://owainwilgar.github.io/Canva-GSC-Connector/";
+
 const datasetOptions = [
   { value: "top_queries", label: "Top Queries" },
   { value: "top_pages", label: "Top Pages" },
   { value: "trend", label: "Trend" },
 ];
+
+const proofDatasetOption = {
+  value: "proof_fixture",
+  label: "Refresh Fixture (P1 only)",
+};
 
 const dateOptions = [
   { value: "last_7_days", label: "Last 7 days" },
@@ -153,7 +161,9 @@ export function SelectionUi({
         ? "Top Queries"
         : dataset === "top_pages"
           ? "Top Pages"
-          : "Search Trend";
+          : dataset === "trend"
+            ? "Search Trend"
+            : "P1 Refresh Fixture";
 
     const result = await request.updateDataRef({
       source: encodeDataRef({
@@ -254,7 +264,11 @@ export function SelectionUi({
         control={(props) => (
           <Select
             {...props}
-            options={datasetOptions}
+            options={
+              property === PROOF_PROPERTY
+                ? [...datasetOptions, proofDatasetOption]
+                : datasetOptions
+            }
             onChange={(value) => setDataset(value as DatasetKind)}
           />
         )}
@@ -271,6 +285,13 @@ export function SelectionUi({
           />
         )}
       />
+
+      {dataset === "proof_fixture" ? (
+        <Text>
+          Development-only synthetic row for proving Canva refresh. Remove
+          before P2.
+        </Text>
+      ) : null}
 
       <Button
         variant="primary"
