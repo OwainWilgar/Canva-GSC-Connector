@@ -1,6 +1,10 @@
 export const DATA_REF_VERSION = 1 as const;
 
-export type DatasetKind = "top_queries" | "top_pages" | "trend";
+export type DatasetKind =
+  | "top_queries"
+  | "top_pages"
+  | "trend"
+  | "proof_fixture";
 export type DateRangePreset =
   | "last_7_days"
   | "last_28_days"
@@ -45,7 +49,12 @@ export function decodeDataRef(source: string): GscDataRef {
 }
 
 export function isDatasetKind(value: unknown): value is DatasetKind {
-  return value === "top_queries" || value === "top_pages" || value === "trend";
+  return (
+    value === "top_queries" ||
+    value === "top_pages" ||
+    value === "trend" ||
+    value === "proof_fixture"
+  );
 }
 
 export function isDateRangePreset(value: unknown): value is DateRangePreset {
