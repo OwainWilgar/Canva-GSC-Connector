@@ -1342,3 +1342,28 @@ Do not rerun the terminal checks unless source changes. Keep the preview/browser
 > Continue the existing P2 validation session from the already-running preview and signed-in Canva browser. Do not rerun typecheck/tests/build unless source changed. Perform only the remaining authenticated smoke from `docs/tasks/002-production-mvp.md`: confirm the hardened connector UI renders, edit an existing connected source and verify **Update data**, import one normal dataset, and run **Refresh Data** once. Record exact evidence. If all four are green, mark Task 002 complete and advance canonical state to **P3 — Prepare Review**. Otherwise stop on the first genuine product failure and record it.
 
 So your role now is just **sign in, then hand it back**.
+
+
+## Turn 0039
+
+### User
+
+Continue the existing P2 validation session from the already-running preview and signed-in Canva browser. Do not rerun typecheck/tests/build unless source changed. Perform only the remaining authenticated smoke from `docs/tasks/002-production-mvp.md`: confirm the hardened connector UI renders, edit an existing connected source and verify **Update data**, import one normal dataset, and run **Refresh Data** once. Record exact evidence. If all four are green, mark Task 002 complete and advance canonical state to **P3 — Prepare Review**. Otherwise stop on the first genuine product failure and record it. &#x20;
+
+i logged in
+
+### Assistant message 1
+
+I’ll continue from the existing preview and Canva tab. I’ll check the inbox and gate packet, then inspect the current Canva page and perform only the four remaining smoke steps; I won’t rerun local validation unless the source changed.
+
+### Assistant message 2
+
+The hardened selection UI is visible with the expected property, Top Queries, rolling date range, row cap, and **Import data** action. I tried that normal import in the blank Canva design; Canva returned “Could not save this Search Console selection in Canva. Try again.” I’m stopping the smoke here as requested and recording this first failure; I won’t attempt Update data or refresh after the failed import.
+
+### Assistant final
+
+The Canva selection UI rendered and showed the selected property, **Top Queries**, rolling **Last 28 days**, the 100-row cap, and honest top-row wording. The normal import failed with: “Could not save this Search Console selection in Canva. Try again.”
+
+The current design had an empty sheet and offered **Import data**; no existing connected source was available to verify **Update data**. I stopped at the import failure as instructed, so **Update data** and **Refresh Data** remain unverified. Task 002 stays active and canonical state remains P2.
+
+I recorded the exact outcome in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). No local validation was rerun because source had not changed.

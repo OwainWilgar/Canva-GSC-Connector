@@ -144,6 +144,31 @@ This is validation, not owner product review.
 
 **P2 validation gate: NOT GREEN — awaiting authenticated Canva smoke.** Typecheck, tests, build and preview startup passed, but the required authenticated UI/import/refresh checks have no evidence yet. `CURRENT_STATE.md` and task status remain unchanged; do not advance to P3 until the remaining smoke is completed and recorded.
 
+## Owner-authenticated Canva smoke follow-up — 2026-10-06
+
+The owner completed Canva login and returned to the running preview in an `Untitled design` (800 × 600 Canva editor). The Codex in-app browser showed the Google Search Console draft connector's selection UI with:
+
+- a preselected Search Console property;
+- **Top Queries** selected and its clicks/impressions/CTR/average-position description;
+- **Last 28 days** and the rolling-window refresh explanation;
+- the 100-row Canva import cap;
+- **Import data** and **Switch Google account** actions;
+- clear copy that query/page reports contain Google's top rows and are not exhaustive exports.
+
+UI render: **PASS**.
+
+The current design showed an empty sheet grid and the connector presented **Import data**, not an existing-source update flow. No existing connected source was available in this design to inspect, so **Update data was NOT VERIFIED**.
+
+Attempted the requested normal Top Queries import using the selected property/date range. Canva completed the loading state and displayed this exact connector error:
+
+> Could not save this Search Console selection in Canva. Try again.
+
+Import: **FAIL**. This is the first product failure in the authenticated smoke. Stopped immediately as directed. **Update data** and **Refresh Data** were not attempted after the failure.
+
+### Gate decision after authenticated attempt
+
+**P2 validation gate: NOT GREEN — Canva import failed while saving the Search Console selection.** UI render passed; existing-source Update data was unavailable in the current empty design; import failed with the exact message above; refresh was not run. Keep Task 002 ACTIVE and canonical stage at P2. Do not advance to P3 until the import failure is diagnosed and a complete authenticated smoke passes.
+
 
 ## Owner-local validation update — deterministic suite
 
