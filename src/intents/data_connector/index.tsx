@@ -37,13 +37,21 @@ const connector: DataConnectorIntent = {
 
       const rows = result.rows ?? [];
       const empty = rows.length === 0;
+      const dataTable = buildGscDataTable(
+        ref.dataset,
+        rows.slice(0, reportLimit),
+      );
+
+      console.debug("[GSC connector] data table summary", {
+        dataset: ref.dataset,
+        rows: dataTable.rows.length,
+        columns: dataTable.columnConfigs?.length ?? 0,
+        limit: request.limit,
+      });
 
       return {
         status: "completed",
-        dataTable: buildGscDataTable(
-          ref.dataset,
-          rows.slice(0, reportLimit),
-        ),
+        dataTable,
         metadata: {
           description: empty
             ? `No Search Console rows yet for ${datasetLabel(ref.dataset)} in this rolling period.`
