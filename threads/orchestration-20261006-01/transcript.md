@@ -526,3 +526,49 @@ I restored the current Canva template pieces we were missing:
 You **do not need to run** `canva apps migrate webpack-to-app-scripts`. That migration is for older apps with bespoke webpack/start-runner files; this repo doesn't have those. Canva documents `@canva/app-scripts` as the package that powers `canva apps start`/build in current apps. citeturn511739search1turn511739search3
 
 If `canva apps start --preview` boots, send me what you see in Canva—especially whether **Connect Google** appears and what happens when you click it. If it fails again, paste the **first error after the app-scripts install**, not the repeated fallback loop.
+
+
+## Turn 0011
+
+### User
+
+git pull                          
+Updating 1de64cd..240b173
+error: Your local changes to the following files would be overwritten by merge:
+        package.json
+Please commit your changes or stash them before you merge.
+Aborting
+PS C:\Users\owilg\Documents\Repos\Canva-GSC-Connector>
+
+### Assistant message 1
+
+That’s a normal Git safety stop: your local `package.json` differs from the repo version I just changed, so Git won’t overwrite it. I’m checking the project state first; then I’ll give you a recovery path that preserves anything local instead of telling you to discard it blindly.
+
+### Assistant message 2
+
+The safest fix is to **stash just your local `package.json`**, pull my runtime patch, then reinstall. Don’t use `git reset --hard` here—we don’t yet know what changed locally, and there’s no need to risk losing it.
+
+### Assistant final
+
+Run this exactly:
+
+```powershell
+git diff -- package.json
+git stash push -m "pre-app-scripts package.json" -- package.json
+git pull
+npm install
+npm run lint:types
+npm test
+canva apps start --preview
+```
+
+The first command is just for visibility; the stash preserves your local `package.json` instead of deleting it. **Do not run `git stash pop` afterward** unless we inspect that diff and decide there was something worth restoring—the remote `package.json` intentionally contains the Canva `@canva/app-scripts` fix we need.
+
+If `git stash push` says there is nothing to save, send me:
+
+```powershell
+git status --short
+git diff -- package.json
+```
+
+Otherwise the expected path is: pull succeeds → `npm install` updates dependencies → typecheck/tests stay green → preview boots.
