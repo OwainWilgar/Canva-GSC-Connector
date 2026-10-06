@@ -117,3 +117,24 @@ This is validation, not owner product review.
 ## Current P2 decision
 
 > **Implementation complete enough for executable validation. Do not move to P3 until typecheck/tests/build and the narrow Canva smoke pass are green.**
+
+
+## Owner-local validation update — deterministic suite
+
+Observed on latest P2 validation attempt:
+- 7/8 Jest suites passed;
+- 43/44 tests passed;
+- only failure was `tests/limits.test.ts`;
+- production behavior was correct: a 4-column Canva surface raised `This Canva surface allows 4 columns, but this report needs 5.`;
+- the stale test expected the obsolete phrase `five-column`.
+
+Classification:
+- **test assertion defect, not product-code defect**.
+
+Fix:
+- changed the assertion to match the actual user-facing contract: `needs 5`.
+
+Next:
+- pull latest main;
+- rerun `npm test`;
+- then continue `npm run build` and the narrow Canva smoke if green.
