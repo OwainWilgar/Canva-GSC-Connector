@@ -1,0 +1,24 @@
+node_modules/
+dist/
+build/
+coverage/
+.tmp/
+tmp/
+*.log
+
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db
+
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Never commit OAuth credentials or local auth/session material.
+credentials.*
+secrets.*
+tokens.*
