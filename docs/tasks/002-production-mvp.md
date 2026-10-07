@@ -188,14 +188,24 @@ The hardened UI renders LIVE, but a fresh Top Queries import currently throws in
 
 Console capture is not reliable in the current Codex browser, so the connector now displays a temporary **P2 diagnostic trace (temporary)** panel after the failure. It contains only non-sensitive lifecycle facts.
 
-Codex should:
+Codex should split this into two phases.
+
+**Phase A — preview transport, no import attempt:**
 1. pull latest main;
-2. run `npm run lint:types` and `npm test` because diagnostic source changed;
-3. restart preview from the pulled source using the installed global `canva` CLI when available; use `npx` only as a fallback;
-4. confirm the selection UI reflects the latest source;
-5. reproduce exactly one Top Queries import in the authenticated Canva session;
-6. copy every line shown under **P2 diagnostic trace (temporary)** plus the exact visible error;
-7. stop before speculative fixes.
+2. start the local server with the installed global `canva apps start`;
+3. verify `http://localhost:8080` directly returns the app's standalone JavaScript bundle;
+4. verify Canva Developer Portal → Inside Canva → Code upload → App source → Development URL is exactly `http://localhost:8080` (or exactly matches another explicitly chosen running port);
+5. in Chrome/Chromium, grant Canva local-network access to localhost if prompted or previously denied;
+6. open the Data Connector preview and confirm the latest UI/temporary diagnostic capability is visibly loaded;
+7. if any of those fail, stop and report the transport failure without attempting import.
+
+**Phase B — one diagnostic import only after Phase A passes:**
+1. reproduce exactly one Top Queries import in the authenticated Canva session;
+2. copy every line shown under **P2 diagnostic trace (temporary)** plus the exact visible error;
+3. wait several seconds for late lifecycle entries;
+4. stop before speculative fixes.
+
+Do not switch to HTTPS unless HTTP is genuinely blocked. If HTTPS is used, both the running server and Developer Portal Development URL must use HTTPS, and the self-signed certificate warning must be bypassed first.
 
 Do not ask the owner to repeat terminal commands or re-authenticate unless Canva has actually expired the session.
 
