@@ -18,7 +18,9 @@ _No messages yet._
 
 ### 2026-10-07 — Factory cycle compression
 
-**Status: UNREAD**
+**Status: ACKNOWLEDGED**
+
+**Effect on this project:** finish the already-in-flight import diagnosis, but stop creating owner-mediated one-check loops. First restore local preview transport without consuming the import attempt; once the import defect is fixed, run one batched Luna/Codex certification campaign across all independent P3 scenarios, return one defect batch, then do one Sol web correction pass plus focused regression.
 
 **Source:** `OwainWilgar/owain-shared/docs/CYCLE_COMPRESSION.md` and `docs/VALIDATION_ROUTING.md`.
 
