@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** fresh import still fails in Canva `updateDataRef`. Console access proved unreliable, so latest main now surfaces a temporary non-sensitive lifecycle trace directly inside the connector after failure. The trace should reveal the exact host error plus `getDataTable` timing/abort/table-dimension facts without DevTools.
+- **Current gate:** connector import regression diagnosis is prepared, but the latest Codex run could not load the pulled local bundle in Canva. Restore local preview transport first: the Canva Developer Portal Development URL must exactly match the running local server and Chromium must allow Canva local-network access. Do not consume the remaining import attempt until the current pulled bundle visibly loads.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**No further owner interaction should be needed while Canva remains authenticated. Codex should pull latest main, run typecheck/tests, restart preview from the pulled source using the installed global `canva` CLI when available, make one Top Queries import attempt, and copy the visible `P2 diagnostic trace (temporary)` lines from the connector UI.**
+**Codex should diagnose preview transport only. Start the local server, verify `http://localhost:8080` directly returns the app bundle, verify the Developer Portal Development URL matches it exactly, and ensure Chrome/Chromium grants Canva local-network access. If the browser requires the owner to toggle that permission or change the Developer Portal URL, ask only for that bounded action. Once the pulled connector UI is visibly loaded, resume the single diagnostic import attempt.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
