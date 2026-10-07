@@ -189,8 +189,8 @@ The hardened UI renders LIVE, but a fresh Top Queries import currently throws in
 Codex should:
 1. pull latest main;
 2. rerun typecheck/tests because diagnostic source changed;
-3. reproduce one import in the authenticated Canva session;
-4. capture only the `[GSC connector]` diagnostic entries plus the visible error;
+3. reproduce exactly one Top Queries import in the authenticated Canva session;
+4. capture every `[GSC connector]` JSON-string console entry in timestamp order, including any abort line, plus the exact visible error;
 5. stop before speculative fixes.
 
 Do not ask the owner to repeat terminal commands or re-authenticate unless Canva has actually expired the session.
