@@ -427,3 +427,35 @@ Interpretation:
 - the remaining boundary is the local Canva CLI/runtime process or its execution isolation.
 
 Next observation should be a single consolidated runtime diagnosis: exact CLI/Node versions and binary path, foreground process lifetime, child process tree, listener state while `ready`, stdout/stderr, and same-boundary versus host-boundary reachability. Do not re-enter Canva until a host-visible listener is proven.
+
+
+## Preview runtime resolved — approved boundary
+
+The consolidated runtime diagnosis resolved the apparent no-listener contradiction.
+
+Environment:
+- main at `d57d4aa`;
+- Node `v24.18.0`;
+- Canva CLI `2.13.2`;
+- global package `@canva/cli@2.13.2`;
+- `canva` command resolves to the user's global npm PowerShell shim.
+
+Observed in the approved/host execution boundary:
+- `canva apps start --override-frontend-port 8090` remains running;
+- port 8090 is listening on IPv6 loopback `::1`, owned directly by the Canva CLI Node process;
+- no child process is required;
+- `http://localhost:8090` returns the current JavaScript bundle successfully;
+- `http://127.0.0.1:8090` is refused because the listener is IPv6-loopback-only;
+- port 8080 is separately owned by an existing `canva apps start --preview` process;
+- the Codex sandbox cannot see or reach the host listener, while the approved boundary can.
+
+Owner confirmation:
+- Canva was opened from the working host preview and the app loaded successfully.
+
+Classification:
+- **preview transport RESOLVED**;
+- earlier no-listener results were caused by execution-boundary visibility plus the IPv6-only loopback bind, not Canva connector code or a failed CLI server;
+- use `localhost`, not `127.0.0.1`, for this preview;
+- do not repeat port/runtime diagnosis unless the preview stops loading.
+
+The in-flight import diagnostic attempt remains unused. Next action is exactly one Top Queries import against the now-confirmed current bundle, with the temporary visible diagnostic panel captured only if the import fails.
