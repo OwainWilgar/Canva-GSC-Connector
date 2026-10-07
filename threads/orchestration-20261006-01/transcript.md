@@ -1438,3 +1438,56 @@ I made exactly one **Top Queries → Import data** attempt. Canva displayed: “
 The browser capture also returned a third entry, `[GSC connector] data table summary Object`, at `2026-10-07T01:39:28.910Z`. Its log API exposed each message, timestamp and source URL, but collapsed the object arguments to `Object`, so the diagnostic field values were unavailable. No speculative fix was made.
 
 I recorded these results in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). Import remains failed; Task 002 stays active and canonical state remains P2.
+
+
+## Turn 0040
+
+### User
+
+Pulled `main` to `4be40b6`. Typecheck passed, and Jest passed **8/8 suites, 44/44 tests**. The existing preview hot-rebuilt; I did not rerun the build.
+
+I made exactly one **Top Queries → Import data** attempt. Canva displayed: “Could not save this Search Console selection in Canva. Try again.”
+
+The two `updateDataRef` console entries were:
+```
+2026-10-07T01:39:24.478Z DEBUG [GSC connector] updateDataRef request Object
+2026-10-07T01:39:25.588Z ERROR [GSC connector] updateDataRef threw Object
+```
+
+The browser capture also returned a third entry: `[GSC connector] data table summary Object` at `2026-10-07T01:39:28.910Z`. The capture exposed the messages, timestamps, and source URL, but collapsed the logged objects to `Object`, so their property values weren’t available. I made no speculative fix.
+
+I recorded the reproduction in the P2 evidence file and pushed the transcript/evidence update as `88282bd`. Task 002 remains active; canonical state remains P2.
+
+### Assistant message 1
+
+This reproduction gives us one new clue: **`updateDataRef` rejected before `getDataTable` finished**. The host error arrived at `01:39:25.588`, while our data-table summary appeared at `01:39:28.910`. That makes a simple invalid-table-shape explanation less convincing, because Canva had already rejected the selection roughly 3.3 seconds before our table builder completed.
+
+I’m checking the SDK contract for timing/cancellation behavior, then I’ll change the diagnostics so Codex captures primitive strings instead of collapsed `Object` values. That should make the next run decisive.
+
+### Assistant message 2
+
+The SDK docs do **not** document a one-second `updateDataRef` timeout, so I’m not going to assume one. What the timestamps do justify is a lifecycle trace: we need to know whether Canva rejects before `getDataTable` starts, while Google is in flight, or after the result returns.
+
+I’m replacing the collapsed object logs with single JSON strings and adding safe elapsed-time / aborted-state checkpoints. One more Codex reproduction should tell us whether this is a Canva host rejection, a preview lifecycle race, or a returned-table contract issue.
+
+### Assistant final
+
+The first diagnostic was useful, but not yet decisive: Canva rejected `updateDataRef` before our final table-summary log, and the browser collapsed the diagnostic objects.
+
+I’ve now changed the diagnostics so every entry is a single JSON string. The next run will show:
+- source/title sizes;
+- `updateDataRef` elapsed time and exact Canva error name/code/message;
+- when `getDataTable` starts;
+- when the access token is ready;
+- when Search Analytics completes;
+- whether Canva aborts the request;
+- final row/column counts and limits;
+- any mapped `getDataTable` failure.
+
+No sensitive values are logged.
+
+Give Codex this continuation:
+
+> Pull latest main. Run only `npm run lint:types` and `npm test` because diagnostic source changed; do not rerun the full build unless the preview fails to hot-rebuild. In the still-authenticated Canva session, make exactly one **Top Queries → Import data** attempt. Capture **every console line beginning `[GSC connector]` in timestamp order**, including the full JSON text and any abort/failure line, plus the exact visible Canva error. Do not make any code change after reproduction. Record the trace in the P2 evidence file and report it back.
+
+That next trace should tell us whether we’re dealing with a Canva host rejection, an abort/lifecycle race, a slow Google call, or a genuine returned-table contract problem.
