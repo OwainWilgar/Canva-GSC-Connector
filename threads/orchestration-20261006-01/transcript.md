@@ -1404,3 +1404,37 @@ Hand the still-authenticated session back to Codex with:
 > Pull latest main. Because diagnostic source changed, run `npm run lint:types` and `npm test`; do not redo unrelated validation. Keep/restart the existing Canva preview as needed. In the authenticated Canva session, reproduce exactly one **Top Queries → Import data** attempt. Capture the two console entries beginning `[GSC connector]` plus the exact visible error. Do **not** make speculative fixes after reproducing; stop and report those diagnostics back to the orchestration thread.
 
 I've updated `CURRENT_STATE.md`, Task 002, and the P2 evidence memo to make this the only active diagnostic. If the Canva session is still live, you shouldn't need to do anything yourself.
+
+
+## Turn 0040
+
+### User
+
+Pull latest main. Because diagnostic source changed, run `npm run lint:types` and `npm test`; do not redo unrelated validation. Keep/restart the existing Canva preview as needed. In the authenticated Canva session, reproduce exactly one **Top Queries → Import data** attempt. Capture the two console entries beginning `[GSC connector]` plus the exact visible error. Do **not** make speculative fixes after reproducing; stop and report those diagnostics back to the orchestration thread.
+
+### Assistant message 1
+
+I’ll read the inbox and inspect the diagnostic-source change, then run only typecheck and tests. I’ll use the existing authenticated Canva tab and preview for exactly one import attempt, capture the `[GSC connector]` console entries and visible error, and stop without changing code.
+
+### Assistant message 2
+
+Latest `main` includes the requested safe diagnostics in `updateDataRef` and the DataTable summary. The task packet confirms exactly one reproduction and no speculative fixes. I’m reading the computer-use guidance for console capture, then I’ll run only the two requested local checks and return to the signed-in page.
+
+### Assistant message 3
+
+Typecheck and tests are green (`8/8` suites, `44/44` tests), and the existing preview hot-rebuilt after the pull. I made exactly one Top Queries import attempt. The browser log API returned the two `updateDataRef` entries plus a third DataTable summary; it exposes each logged object as the literal `Object`, so I’ll report the returned messages/timestamps and note that the object properties weren’t available through this capture API.
+
+### Assistant final
+
+Pulled `main` to `4be40b6`. `npm run lint:types` passed, and `npm test` passed **8/8 suites and 44/44 tests**. The existing preview rebuilt after the pull; I did not rerun the build.
+
+I made exactly one **Top Queries → Import data** attempt. Canva displayed: “Could not save this Search Console selection in Canva. Try again.” The two relevant console entries were:
+
+```text
+2026-10-07T01:39:24.478Z DEBUG [GSC connector] updateDataRef request Object
+2026-10-07T01:39:25.588Z ERROR [GSC connector] updateDataRef threw Object
+```
+
+The browser capture also returned a third entry, `[GSC connector] data table summary Object`, at `2026-10-07T01:39:28.910Z`. Its log API exposed each message, timestamp and source URL, but collapsed the object arguments to `Object`, so the diagnostic field values were unavailable. No speculative fix was made.
+
+I recorded these results in [task-002-production-mvp-2026-10-06.md](C:/Users/owilg/Documents/Repos/Canva-GSC-Connector/docs/evidence/task-002-production-mvp-2026-10-06.md). Import remains failed; Task 002 stays active and canonical state remains P2.

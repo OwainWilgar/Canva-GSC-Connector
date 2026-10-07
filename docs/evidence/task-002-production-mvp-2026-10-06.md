@@ -229,3 +229,50 @@ Next diagnostic:
 4. reproduce one Top Queries import in the authenticated Canva session;
 5. capture the two `[GSC connector]` console entries and exact visible error;
 6. stop before further code changes so the next patch is evidence-driven.
+
+
+## Owner-machine diagnostic reproduction — 2026-10-07
+
+### Checkout and deterministic checks
+
+- Pulled `origin/main` from `86aceed` to `4be40b6` (`Record orchestration turn 0039`). The intervening commits added the temporary `updateDataRef` and DataTable diagnostics.
+- `npm run lint:types` — **PASS** (`tsc --noEmit`, no diagnostics).
+- `npm test` — **PASS**, 8/8 suites and 44/44 tests.
+- Did not rerun `npm run build`; source was changed only to add the requested diagnostics, and the already-running Canva preview session remained active. The preview session reported a successful rebuild of `intents\\data_connector\\index.tsx` and its companion module after the pull.
+
+### One authenticated import attempt
+
+- Confirmed no `[GSC connector]` entries were present before the attempt.
+- In the signed-in Canva editor, opened the draft connector with **Top Queries**, **Last 28 days**, and the existing selected property; the UI displayed **Import data**.
+- Clicked **Import data exactly once**. Canva completed loading and displayed:
+
+> Could not save this Search Console selection in Canva. Try again.
+
+- No retry or further import was made.
+
+### Browser console capture
+
+The in-app browser's console API returned the following two `updateDataRef` entries (timestamps are UTC; both report the same Canva Sentry browser script URL):
+
+```text
+2026-10-07T01:39:24.478Z DEBUG [GSC connector] updateDataRef request Object
+https://static.canva.com/web/8eebcb6ebc79a02b.sentry_browser.js
+
+2026-10-07T01:39:25.588Z ERROR [GSC connector] updateDataRef threw Object
+https://static.canva.com/web/8eebcb6ebc79a02b.sentry_browser.js
+```
+
+The capture API exposed the console `message`, timestamp, level, and source URL, but rendered each logged object argument as the literal `Object`; it did not expose the object's property values. The source logs request fields `sourceBytes`, `titleLength`, `limit`, and `dataset`, and thrown-error fields `name`, `code`, and `message`.
+
+The same single attempt also emitted one additional diagnostic entry:
+
+```text
+2026-10-07T01:39:28.910Z DEBUG [GSC connector] data table summary Object
+https://static.canva.com/web/8eebcb6ebc79a02b.sentry_browser.js
+```
+
+Its object argument was likewise collapsed to `Object` by the capture API. No credential or row contents appeared in the captured messages.
+
+### Stop condition
+
+The exact user-visible error and all `[GSC connector]` messages returned by the browser API are recorded above. No speculative fix was made. The import remains **FAIL** and the P2 gate remains **NOT GREEN**; Task 002 stays ACTIVE and canonical stage stays P2.
