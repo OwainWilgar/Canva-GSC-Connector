@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** local preview transport is the immediate blocker, not connector behavior. The CLI reported a build at port 8080 but direct HTTP timed out. Earlier evidence already showed stale Node listeners on 8080/8081 and a successful preview on 8090. Next: inspect port owners, terminate only stale Canva-preview processes, start the pulled source on explicit port 8090, and prove the bundle is reachable directly before touching Canva or consuming the remaining import attempt.
+- **Current gate:** local preview runtime is the immediate blocker. `canva apps start --override-frontend-port 8090` prints `ready`, but Windows shows no listener on 8080/8081/8090 and direct connections are refused. Do not touch Canva/Developer Portal or consume the import attempt until the CLI/runtime process actually exposes a host-visible socket.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**Codex should diagnose preview transport only. Inspect listeners/PIDs on 8080/8081/8090, terminate only stale Canva/Node preview processes tied to this repo, start `canva apps start --override-frontend-port 8090`, and verify the bundle with a proxy-bypassed request to `127.0.0.1:8090` and `localhost:8090`. Only after that succeeds should the Developer Portal Development URL be set to the exact working URL and Canva preview reopened. Do not attempt import before the current pulled bundle visibly loads.**
+**Codex should run one consolidated local-runtime diagnosis: identify the exact `canva` binary/version and Node version; start the CLI in the foreground on explicit port 8090; capture stdout/stderr and the full Node/process tree; check `Get-NetTCPConnection` / `netstat` while it is running; test `127.0.0.1:8090` from the same execution boundary and from the host shell if available; determine whether the server child exits, never spawns, or is isolated by the Codex sandbox. Do not open Canva or attempt import until a real host-visible listener exists.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
