@@ -1491,3 +1491,51 @@ Give Codex this continuation:
 > Pull latest main. Run only `npm run lint:types` and `npm test` because diagnostic source changed; do not rerun the full build unless the preview fails to hot-rebuild. In the still-authenticated Canva session, make exactly one **Top Queries → Import data** attempt. Capture **every console line beginning `[GSC connector]` in timestamp order**, including the full JSON text and any abort/failure line, plus the exact visible Canva error. Do not make any code change after reproduction. Record the trace in the P2 evidence file and report it back.
 
 That next trace should tell us whether we’re dealing with a Canva host rejection, an abort/lifecycle race, a slow Google call, or a genuine returned-table contract problem.
+
+
+## Turn 0041
+
+### User
+
+Pulled `main` to `8c6f3bd`. `npm run lint:types` and `npm test` passed. The preview watcher could not start because `npx` could not resolve `@canva/cli`, so I ran the full build under your stated exception; it passed.
+
+I made **one** Top Queries import attempt. Canva showed:
+
+> Could not save this Search Console selection in Canva. Try again.
+
+I couldn’t capture the timestamped `[GSC connector]` lines or their JSON: this browser-control session exposed the page but not its console, and the DevTools shortcuts did not open one. I recorded the result and that limitation in the P2 evidence file. The loaded bundle also couldn’t be confirmed against the pulled source.
+
+Before the attempt, I moved `startedAt` into function scope to fix the type error found by the requested check. No source code changed after the attempt. P2 remains active; the diagnostic trace is still outstanding.
+
+### Assistant message 1
+
+That browser limitation is enough evidence to stop chasing console access. We can make the next reproduction self-reporting **inside the connector UI** instead.
+
+I’m going to replace the console-only trace with a temporary on-screen diagnostic panel that appears only after the import throws. It will show the same non-sensitive lifecycle facts as plain text—source/title sizes, Canva limits, `getDataTable` start/abort/result timing, table dimensions, and the exact host error code/message—so Codex can read it from the page without DevTools.
+
+### Assistant message 2
+
+The console route has reached diminishing returns. I’m switching the diagnostic transport, not the product behavior: the connector itself will temporarily show the non-sensitive lifecycle trace after an import failure, so Codex can read it directly from the Canva panel.
+
+I’m also fixing the `startedAt` scope issue on `main` so your local one-off correction isn’t left as an uncommitted divergence.
+
+### Assistant message 3
+
+The visible diagnostic path is now committed. I’m adding a tiny deterministic test for the trace transport and updating the handoff so Codex also avoids the `npx` network dependency: use the already-installed global `canva` CLI if available, and only fall back to `npx` if needed. The next attempt should both prove the loaded bundle is current and expose the rejection details directly in the Canva panel.
+
+### Assistant final
+
+Good stop. The browser-control environment itself is now the blocker for console-based diagnostics, so I’ve removed that dependency.
+
+Latest `main` now:
+- fixes the `startedAt` scope issue canonically;
+- routes the safe lifecycle trace through a shared in-memory diagnostic channel;
+- shows a temporary **P2 diagnostic trace (temporary)** directly inside the connector after the import throws;
+- keeps listening after the throw, so later `getDataTable` / abort / table-summary events can still appear in the panel;
+- includes deterministic tests for that trace transport.
+
+Give Codex this continuation:
+
+> Pull latest main. Run `npm run lint:types` and `npm test`. Restart the Canva preview from the pulled source, preferring the installed global `canva` CLI over `npx`; use `npx` only if needed. Confirm the hardened selection UI is current. Make exactly one **Top Queries → Import data** attempt. After the failure, copy **every line shown under “P2 diagnostic trace (temporary)”** plus the exact visible error. Wait a few seconds after the error so any later lifecycle lines can appear. Do not change code after the attempt; record the trace and report it back.
+
+That should finally give us the exact rejection without needing DevTools.
