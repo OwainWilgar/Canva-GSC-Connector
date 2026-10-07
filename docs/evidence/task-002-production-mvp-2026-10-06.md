@@ -404,3 +404,26 @@ Next Phase A:
 4. verify `127.0.0.1:8090` and `localhost:8090` using `curl.exe --noproxy "*"`;
 5. only after direct bundle reachability succeeds, align Developer Portal Development URL and reopen Canva;
 6. do not consume the remaining import attempt until the current bundle is visibly loaded.
+
+
+## Preview runtime diagnosis — no listener exists
+
+Latest transport-only run:
+- pulled main to `25ec009`;
+- confirmed no listeners on 8080, 8081 or 8090 before start;
+- started `canva apps start --override-frontend-port 8090`;
+- CLI reported `ready` at `http://localhost:8090`;
+- Windows still showed no listener on 8080, 8081 or 8090;
+- proxy-bypassed direct requests to both `127.0.0.1:8090` and `localhost:8090` failed with connection refused (curl exit 7);
+- preview process was stopped;
+- Canva was not opened and no import attempt was made;
+- the one-attempt import diagnostic budget remains unused;
+- pre-existing tracked edits were preserved in stash `preserve P2 evidence during listener cleanup`;
+- untracked `package-lock.json` remained untouched.
+
+Interpretation:
+- stale port ownership is ruled out for this run;
+- Developer Portal URL, browser local-network permission and connector code are not yet relevant because no local HTTP listener exists;
+- the remaining boundary is the local Canva CLI/runtime process or its execution isolation.
+
+Next observation should be a single consolidated runtime diagnosis: exact CLI/Node versions and binary path, foreground process lifetime, child process tree, listener state while `ready`, stdout/stderr, and same-boundary versus host-boundary reachability. Do not re-enter Canva until a host-visible listener is proven.
