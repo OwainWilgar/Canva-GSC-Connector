@@ -348,3 +348,34 @@ Next diagnostic:
 - make exactly one Top Queries import attempt;
 - copy all lines visible under **P2 diagnostic trace (temporary)**;
 - stop before any further behavioral fix.
+
+
+## Preview transport blocker — 2026-10-07
+
+Latest Codex run:
+- pulled latest source;
+- typecheck passed;
+- Jest passed with 9 suites / 46 tests;
+- global Canva CLI started the pulled source;
+- Canva Editor could not load the app bundle from `http://localhost:8080/`;
+- HTTPS was tried, but Canva continued requesting the HTTP Development URL;
+- no Top Queries import was attempted, so the one-attempt diagnostic budget remains unused.
+
+Current Canva documentation confirms:
+- `canva apps start` serves the local app at `http://localhost:8080` by default;
+- the Developer Portal's Development URL must point to the running local development server;
+- Chrome/Chromium requires explicit local-network access permission for Canva to reach localhost;
+- HTTPS is optional and requires both starting the server with HTTPS and configuring the Development URL to the matching HTTPS URL, plus bypassing the self-signed certificate warning.
+
+Interpretation:
+- this run did not exercise connector behavior;
+- treat it as local preview transport/configuration, not an import regression result;
+- do not consume the remaining import attempt until the pulled source is visibly loaded in Canva.
+
+Next preflight:
+1. start global `canva apps start`;
+2. navigate directly to `http://localhost:8080` and verify minified JavaScript is returned;
+3. verify Developer Portal Development URL is exactly `http://localhost:8080`;
+4. grant Canva local-network access in Chrome/Chromium;
+5. open preview and confirm latest connector UI;
+6. only then run the single diagnostic import attempt.
