@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** local preview runtime is the immediate blocker. `canva apps start --override-frontend-port 8090` prints `ready`, but Windows shows no listener on 8080/8081/8090 and direct connections are refused. Do not touch Canva/Developer Portal or consume the import attempt until the CLI/runtime process actually exposes a host-visible socket.
+- **Current gate:** local preview transport is RESOLVED in the approved host boundary. Canva CLI 2.13.2 on Node 24.18.0 listens on IPv6 loopback (`::1`); `http://localhost:8090` serves the current bundle while `127.0.0.1:8090` does not, and the Codex sandbox cannot see the host listener. Canva now loads the app. Resume exactly one Top Queries import against the current bundle and capture the temporary visible P2 diagnostic trace if it fails.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**Codex should run one consolidated local-runtime diagnosis: identify the exact `canva` binary/version and Node version; start the CLI in the foreground on explicit port 8090; capture stdout/stderr and the full Node/process tree; check `Get-NetTCPConnection` / `netstat` while it is running; test `127.0.0.1:8090` from the same execution boundary and from the host shell if available; determine whether the server child exits, never spawns, or is isolated by the Codex sandbox. Do not open Canva or attempt import until a real host-visible listener exists.**
+**Preview transport is resolved. Keep the approved-boundary preview on `http://localhost:8090` running and do not repeat runtime diagnostics. Hand the loaded Canva session back to Codex for exactly one Top Queries import attempt. If it fails, wait several seconds and copy every line under `P2 diagnostic trace (temporary)` plus the visible error, then stop. If it succeeds, record that the in-flight import regression is no longer reproducing and transition immediately to the planned batched Luna/Codex certification campaign rather than another one-check loop.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
