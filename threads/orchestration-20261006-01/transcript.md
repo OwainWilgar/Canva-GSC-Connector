@@ -1539,3 +1539,36 @@ Give Codex this continuation:
 > Pull latest main. Run `npm run lint:types` and `npm test`. Restart the Canva preview from the pulled source, preferring the installed global `canva` CLI over `npx`; use `npx` only if needed. Confirm the hardened selection UI is current. Make exactly one **Top Queries → Import data** attempt. After the failure, copy **every line shown under “P2 diagnostic trace (temporary)”** plus the exact visible error. Wait a few seconds after the error so any later lifecycle lines can appear. Do not change code after the attempt; record the trace and report it back.
 
 That should finally give us the exact rejection without needing DevTools.
+
+
+## Turn 0042
+
+### User
+
+Pulled `main` to `3596a3b`. `npm run lint:types` passed; `npm test` passed with 9 suites and 46 tests.
+The global Canva CLI started the pulled source, but Canva’s editor could not load its bundle from `http://localhost:8080/`. I also tried HTTPS; the editor continued requesting the HTTP URL. The hardened selection UI wasn’t available, so I made **no import attempt** and captured no diagnostic-panel lines. The one-attempt budget remains unused.
+The exact visible error and run details are in the P2 evidence file. The preview needs to load the local bundle before I can proceed with the single import. No source code was changed.
+
+### Assistant message 1
+
+That’s a different blocker from the connector itself: **the local preview transport failed before Canva could execute our app bundle**, so the import regression was not re-tested and the one-attempt budget is still intact. I’m reading the exact run evidence and current preview instructions now, then I’ll give Codex the smallest recovery path to get the pulled bundle loaded before touching the import again.
+
+### Assistant message 2
+
+The preview failure is now well-understood enough to treat separately from the connector regression. Canva’s current docs confirm three things: the dev server is expected at `http://localhost:8080`, the Developer Portal’s **Development URL must match that exact local URL**, and Chromium must grant Canva **local network access** to reach it. Switching the server to HTTPS alone won’t help if the Developer Portal is still pointing Canva at HTTP.
+
+I’m updating the handoff so Codex fixes **preview transport only**, verifies the pulled bundle is actually loaded, and does not consume the remaining import attempt until that’s proven. I’m also acknowledging the factory’s new “batch validation, not one-check loops” relay at this natural transition.
+
+### Assistant final
+
+The preview failure is separate from the connector bug, and the remaining import attempt is still unused.
+
+Canva’s current docs say the normal local path is **HTTP on localhost:8080**. The key is that the Developer Portal’s **Development URL must exactly match the running local server**, and Chrome/Chromium must allow Canva **local network access**. Simply starting HTTPS does not change what Canva requests if the portal is still configured for HTTP. citeturn503925search0turn503925search1turn503925search3
+
+Give Codex this next task:
+
+> Pull latest main. Do **preview transport only** first; do not attempt import. Start the app with the installed global `canva apps start`. Verify that opening `http://localhost:8080` directly returns the app’s minified JavaScript. Then verify Canva Developer Portal → Inside Canva → Code upload → App source → Development URL is exactly `http://localhost:8080` (or exactly matches whatever explicit port the running server uses). In Chrome/Chromium, grant Canva local-network access to localhost if prompted or previously denied. Open the Data Connector preview and confirm the latest hardened UI / temporary diagnostic capability is visibly loaded. If any transport step fails, stop and report it without importing. Only after transport is confirmed, make the single **Top Queries → Import data** diagnostic attempt, wait a few seconds, and copy every line under **P2 diagnostic trace (temporary)** plus the visible error. Do not make speculative fixes afterward.
+
+If Chrome shows a local-network permission icon/toggle in the address bar, that is the first thing I’d check. Canva explicitly calls that out as a cause of local previews not loading. citeturn503925search1
+
+I’ve also updated the project to follow the new factory rule: after this already-in-flight defect is understood, we’ll stop doing one-check/one-fix loops and run the remaining objective validation as one batched Codex/Luna certification pass.
