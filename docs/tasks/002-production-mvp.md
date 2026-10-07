@@ -190,21 +190,28 @@ Console capture is not reliable in the current Codex browser, so the connector n
 
 Codex should split this into two phases.
 
-**Phase A — preview transport, no import attempt:**
-1. pull latest main;
-2. inspect Windows listeners on ports 8080, 8081 and 8090 and resolve each owning PID/process command line;
-3. terminate **only** stale Canva/Node preview processes tied to this repository; do not kill unrelated Node processes;
-4. start the pulled source explicitly on the previously working port:
-   `canva apps start --override-frontend-port 8090`;
-5. from a separate shell, bypass proxies and verify both:
-   - `curl.exe --noproxy "*" --max-time 5 http://127.0.0.1:8090/`
-   - `curl.exe --noproxy "*" --max-time 5 http://localhost:8090/`
-   A healthy Canva dev server should return the app's minified JavaScript;
-6. if one host works and the other fails, record that as a host-resolution/proxy boundary; if neither works, stop with listener/PID/process output;
-7. only after direct reachability succeeds, set Developer Portal → Development URL to the exact working URL (normally `http://localhost:8090`);
-8. grant Canva local-network access in Chrome/Chromium if required;
-9. open the Data Connector preview and confirm the latest UI/temporary diagnostic capability is visibly loaded;
-10. if any transport step fails, stop and report it without attempting import.
+**Phase A — local runtime diagnosis, no Canva/import attempt:**
+1. pull latest main but preserve the existing evidence stash and untracked `package-lock.json`;
+2. record:
+   - `node --version`;
+   - `canva --version`;
+   - `Get-Command canva | Format-List *`;
+   - global package root / installed Canva CLI package version if resolvable;
+3. start `canva apps start --override-frontend-port 8090` **in the foreground**, keeping the terminal/process alive and capturing stdout/stderr;
+4. while it claims `ready`, from another shell in the **same execution boundary** capture:
+   - `Get-NetTCPConnection -State Listen` filtered to 8080/8081/8090;
+   - `netstat -ano` for those ports;
+   - the CLI PID plus child process tree/command lines;
+   - whether any child Node process exits immediately;
+5. test `http://127.0.0.1:8090/` and `http://localhost:8090/` from that same boundary with proxy bypass;
+6. if Codex offers an approved/unsandboxed execution boundary, repeat only the start + listener + curl check there to distinguish sandbox network isolation from a Canva CLI failure;
+7. classify the result as one of:
+   - real listener + reachable;
+   - listener exists only inside sandbox;
+   - CLI stays alive but never spawns/listens;
+   - child server spawns then exits (record exit/stderr);
+   - CLI itself exits despite printing ready;
+8. stop after classification. Do not open Canva, change Developer Portal settings, or attempt import unless a host-visible reachable listener is proven.
 
 **Phase B — one diagnostic import only after Phase A passes:**
 1. reproduce exactly one Top Queries import in the authenticated Canva session;
