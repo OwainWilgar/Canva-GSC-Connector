@@ -18,9 +18,37 @@ import { SelectionUi } from "./selection_ui";
 
 const connector: DataConnectorIntent = {
   async getDataTable(request): Promise<GetDataTableResponse> {
+    const startedAt = Date.now();
+
+    console.debug(
+      `[GSC connector] getDataTable start ${JSON.stringify({
+        limit: request.limit,
+        aborted: request.signal.aborted,
+      })}`,
+    );
+
+    request.signal.addEventListener(
+      "abort",
+      () => {
+        console.debug(
+          `[GSC connector] getDataTable aborted ${JSON.stringify({
+            elapsedMs: Date.now() - startedAt,
+          })}`,
+        );
+      },
+      { once: true },
+    );
+
     try {
       const ref = decodeDataRef(request.dataSourceRef.source);
       const token = await getGoogleAccessToken();
+
+      console.debug(
+        `[GSC connector] access token ready ${JSON.stringify({
+          elapsedMs: Date.now() - startedAt,
+          aborted: request.signal.aborted,
+        })}`,
+      );
 
       if (!token?.token) {
         return { status: "outdated_source_ref" };
@@ -35,6 +63,13 @@ const connector: DataConnectorIntent = {
         request.signal,
       );
 
+      console.debug(
+        `[GSC connector] Search Analytics complete ${JSON.stringify({
+          elapsedMs: Date.now() - startedAt,
+          aborted: request.signal.aborted,
+        })}`,
+      );
+
       const rows = result.rows ?? [];
       const empty = rows.length === 0;
       const dataTable = buildGscDataTable(
@@ -42,12 +77,16 @@ const connector: DataConnectorIntent = {
         rows.slice(0, reportLimit),
       );
 
-      console.debug("[GSC connector] data table summary", {
-        dataset: ref.dataset,
-        rows: dataTable.rows.length,
-        columns: dataTable.columnConfigs?.length ?? 0,
-        limit: request.limit,
-      });
+      console.debug(
+        `[GSC connector] data table summary ${JSON.stringify({
+          dataset: ref.dataset,
+          rows: dataTable.rows.length,
+          columns: dataTable.columnConfigs?.length ?? 0,
+          limit: request.limit,
+          elapsedMs: Date.now() - startedAt,
+          aborted: request.signal.aborted,
+        })}`,
+      );
 
       return {
         status: "completed",
@@ -60,7 +99,19 @@ const connector: DataConnectorIntent = {
         },
       };
     } catch (error) {
-      return toGetDataTableError(error);
+      const response = toGetDataTableError(error);
+      console.error(
+        `[GSC connector] getDataTable failed ${JSON.stringify({
+          status: response.status,
+          elapsedMs: Date.now() - startedAt,
+          aborted: request.signal.aborted,
+          errorName:
+            error instanceof Error ? error.name : typeof error,
+          errorMessage:
+            error instanceof Error ? error.message : undefined,
+        })}`,
+      );
+      return response;
     }
   },
 
