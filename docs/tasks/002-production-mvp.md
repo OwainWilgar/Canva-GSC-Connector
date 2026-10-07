@@ -190,34 +190,25 @@ Console capture is not reliable in the current Codex browser, so the connector n
 
 Codex should split this into two phases.
 
-**Phase A — local runtime diagnosis, no Canva/import attempt:**
-1. pull latest main but preserve the existing evidence stash and untracked `package-lock.json`;
-2. record:
-   - `node --version`;
-   - `canva --version`;
-   - `Get-Command canva | Format-List *`;
-   - global package root / installed Canva CLI package version if resolvable;
-3. start `canva apps start --override-frontend-port 8090` **in the foreground**, keeping the terminal/process alive and capturing stdout/stderr;
-4. while it claims `ready`, from another shell in the **same execution boundary** capture:
-   - `Get-NetTCPConnection -State Listen` filtered to 8080/8081/8090;
-   - `netstat -ano` for those ports;
-   - the CLI PID plus child process tree/command lines;
-   - whether any child Node process exits immediately;
-5. test `http://127.0.0.1:8090/` and `http://localhost:8090/` from that same boundary with proxy bypass;
-6. if Codex offers an approved/unsandboxed execution boundary, repeat only the start + listener + curl check there to distinguish sandbox network isolation from a Canva CLI failure;
-7. classify the result as one of:
-   - real listener + reachable;
-   - listener exists only inside sandbox;
-   - CLI stays alive but never spawns/listens;
-   - child server spawns then exits (record exit/stderr);
-   - CLI itself exits despite printing ready;
-8. stop after classification. Do not open Canva, change Developer Portal settings, or attempt import unless a host-visible reachable listener is proven.
+**Phase A — preview transport: RESOLVED**
+- approved host boundary: reachable listener;
+- Node: 24.18.0;
+- Canva CLI: 2.13.2;
+- explicit preview: port 8090;
+- listener: IPv6 loopback `::1`;
+- `http://localhost:8090`: reachable and serves the JavaScript bundle;
+- `http://127.0.0.1:8090`: not reachable because the CLI is not bound on IPv4 loopback;
+- Codex sandbox cannot observe/reach the host listener;
+- Canva has loaded the app from the host preview.
 
-**Phase B — one diagnostic import only after Phase A passes:**
-1. reproduce exactly one Top Queries import in the authenticated Canva session;
-2. copy every line shown under **P2 diagnostic trace (temporary)** plus the exact visible error;
-3. wait several seconds for late lifecycle entries;
-4. stop before speculative fixes.
+Do not repeat Phase A unless preview transport regresses.
+
+**Phase B — one diagnostic import now:**
+1. keep the approved-boundary preview running on `http://localhost:8090`;
+2. in the loaded authenticated Canva session, reproduce exactly one Top Queries import;
+3. if it fails, copy every line shown under **P2 diagnostic trace (temporary)** plus the exact visible error;
+4. wait several seconds for late lifecycle entries, then stop before speculative fixes;
+5. if it succeeds, record that the import regression is no longer reproducing and move directly into the planned batched Luna/Codex certification campaign rather than another one-check/one-fix loop.
 
 Do not switch to HTTPS unless HTTP is genuinely blocked. If HTTPS is used, both the running server and Developer Portal Development URL must use HTTPS, and the self-signed certificate warning must be bypassed first.
 
