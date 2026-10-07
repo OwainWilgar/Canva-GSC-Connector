@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** fresh import still fails in Canva `updateDataRef`. The first diagnostic showed host rejection before the data-table summary, but object payloads were collapsed. Latest main now emits primitive JSON lifecycle logs for `updateDataRef`, `getDataTable`, access-token readiness, Search Analytics completion, abort events, and final table dimensions. One authenticated reproduction should distinguish host rejection, lifecycle race/abort, remote latency, or returned-table rejection.
+- **Current gate:** fresh import still fails in Canva `updateDataRef`. Console access proved unreliable, so latest main now surfaces a temporary non-sensitive lifecycle trace directly inside the connector after failure. The trace should reveal the exact host error plus `getDataTable` timing/abort/table-dimension facts without DevTools.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**No further owner interaction should be needed while the Canva session stays authenticated. Codex should pull latest main, rerun only typecheck/tests because source changed, reproduce one Top Queries import, capture all `[GSC connector]` JSON-string console lines in timestamp order, and stop without fixing anything.**
+**No further owner interaction should be needed while Canva remains authenticated. Codex should pull latest main, run typecheck/tests, restart preview from the pulled source using the installed global `canva` CLI when available, make one Top Queries import attempt, and copy the visible `P2 diagnostic trace (temporary)` lines from the connector UI.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
