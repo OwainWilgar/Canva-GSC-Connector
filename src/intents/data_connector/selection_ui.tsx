@@ -35,6 +35,11 @@ import {
   propertyLabel,
 } from "../../gsc/presentation";
 import { GscError } from "../../gsc/errors";
+import {
+  clearDiagnostics,
+  subscribeDiagnostics,
+  traceDiagnostic,
+} from "../../gsc/diagnostics";
 
 function selectionErrorMessage(
   error: unknown,
@@ -111,6 +116,10 @@ export function SelectionUi({
   const [notice, setNotice] = useState<string | null>(contextMessage);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  const [diagnostics, setDiagnostics] = useState<string[]>([]);
+
+  useEffect(() => subscribeDiagnostics(setDiagnostics), []);
 
   const maxReportRows = Math.min(
     DEFAULT_REPORT_ROW_LIMIT,
@@ -228,7 +237,10 @@ export function SelectionUi({
 
   async function importData() {
     clearFeedback();
+    clearDiagnostics();
+    setShowDiagnostics(false);
     setImporting(true);
+    const startedAt = Date.now();
 
     try {
       const source = encodeDataRef({
@@ -241,27 +253,22 @@ export function SelectionUi({
 
       const title = dataSourceTitle(dataset, property);
 
-      const startedAt = Date.now();
-      console.debug(
-        `[GSC connector] updateDataRef request ${JSON.stringify({
-          sourceBytes: new TextEncoder().encode(source).length,
-          titleLength: title.length,
-          limit: request.limit,
-          dataset,
-        })}`,
-      );
+      traceDiagnostic("updateDataRef request", {
+        sourceBytes: new TextEncoder().encode(source).length,
+        titleLength: title.length,
+        limit: request.limit,
+        dataset,
+      });
 
       const result = await request.updateDataRef({
         source,
         title,
       });
 
-      console.debug(
-        `[GSC connector] updateDataRef resolved ${JSON.stringify({
-          status: result.status,
-          elapsedMs: Date.now() - startedAt,
-        })}`,
-      );
+      traceDiagnostic("updateDataRef resolved", {
+        status: result.status,
+        elapsedMs: Date.now() - startedAt,
+      });
 
       if (result.status === "completed") {
         setSuccess(
@@ -291,12 +298,11 @@ export function SelectionUi({
           "Search Console could not prepare this report. Review the selection and try again.",
       );
     } catch (caught) {
-      console.error(
-        `[GSC connector] updateDataRef threw ${JSON.stringify({
-          ...canvaErrorSummary(caught),
-          elapsedMs: Date.now() - startedAt,
-        })}`,
-      );
+      traceDiagnostic("updateDataRef threw", {
+        ...canvaErrorSummary(caught),
+        elapsedMs: Date.now() - startedAt,
+      });
+      setShowDiagnostics(true);
       setError(
         "Could not save this Search Console selection in Canva. Try again.",
       );
@@ -438,6 +444,15 @@ export function SelectionUi({
 
       {success ? <Text>{success}</Text> : null}
       {error ? <Text>{error}</Text> : null}
+
+      {showDiagnostics ? (
+        <Rows spacing="1u">
+          <Text>P2 diagnostic trace (temporary)</Text>
+          {diagnostics.map((line, index) => (
+            <Text key={`${index}-${line}`}>{line}</Text>
+          ))}
+        </Rows>
+      ) : null}
     </Rows>
   );
 }
