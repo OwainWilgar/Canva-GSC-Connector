@@ -379,3 +379,28 @@ Next preflight:
 4. grant Canva local-network access in Chrome/Chromium;
 5. open preview and confirm latest connector UI;
 6. only then run the single diagnostic import attempt.
+
+
+## Preview transport refinement — explicit listener/port check
+
+Latest run:
+- global Canva CLI reported successful build/start at `http://localhost:8080`;
+- a direct request to that URL timed out after 10 seconds;
+- stop rule was respected before Developer Portal/browser/import work;
+- diagnostic import budget remains unused.
+
+Important inherited evidence:
+- an earlier successful local-preview run found ports 8080 and 8081 already occupied by Node processes;
+- that run used port 8090 successfully.
+
+Current interpretation:
+- do not assume Canva/Chrome is at fault until the local listener is proven;
+- likely boundaries include a stale process owning 8080, a CLI process that built but did not stay/listen, localhost host-resolution/proxy behavior, or sandbox/process-network separation.
+
+Next Phase A:
+1. inspect listeners and owning process command lines for 8080/8081/8090;
+2. terminate only stale Canva/Node preview processes tied to this repository;
+3. start `canva apps start --override-frontend-port 8090`;
+4. verify `127.0.0.1:8090` and `localhost:8090` using `curl.exe --noproxy "*"`;
+5. only after direct bundle reachability succeeds, align Developer Portal Development URL and reopen Canva;
+6. do not consume the remaining import attempt until the current bundle is visibly loaded.
