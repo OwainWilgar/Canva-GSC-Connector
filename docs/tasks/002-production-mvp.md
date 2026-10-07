@@ -192,12 +192,19 @@ Codex should split this into two phases.
 
 **Phase A — preview transport, no import attempt:**
 1. pull latest main;
-2. start the local server with the installed global `canva apps start`;
-3. verify `http://localhost:8080` directly returns the app's standalone JavaScript bundle;
-4. verify Canva Developer Portal → Inside Canva → Code upload → App source → Development URL is exactly `http://localhost:8080` (or exactly matches another explicitly chosen running port);
-5. in Chrome/Chromium, grant Canva local-network access to localhost if prompted or previously denied;
-6. open the Data Connector preview and confirm the latest UI/temporary diagnostic capability is visibly loaded;
-7. if any of those fail, stop and report the transport failure without attempting import.
+2. inspect Windows listeners on ports 8080, 8081 and 8090 and resolve each owning PID/process command line;
+3. terminate **only** stale Canva/Node preview processes tied to this repository; do not kill unrelated Node processes;
+4. start the pulled source explicitly on the previously working port:
+   `canva apps start --override-frontend-port 8090`;
+5. from a separate shell, bypass proxies and verify both:
+   - `curl.exe --noproxy "*" --max-time 5 http://127.0.0.1:8090/`
+   - `curl.exe --noproxy "*" --max-time 5 http://localhost:8090/`
+   A healthy Canva dev server should return the app's minified JavaScript;
+6. if one host works and the other fails, record that as a host-resolution/proxy boundary; if neither works, stop with listener/PID/process output;
+7. only after direct reachability succeeds, set Developer Portal → Development URL to the exact working URL (normally `http://localhost:8090`);
+8. grant Canva local-network access in Chrome/Chromium if required;
+9. open the Data Connector preview and confirm the latest UI/temporary diagnostic capability is visibly loaded;
+10. if any transport step fails, stop and report it without attempting import.
 
 **Phase B — one diagnostic import only after Phase A passes:**
 1. reproduce exactly one Top Queries import in the authenticated Canva session;
