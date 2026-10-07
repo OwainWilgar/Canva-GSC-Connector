@@ -184,14 +184,18 @@ This is technical validation only. Do not turn it into owner product review.
 
 ### Current diagnostic stop
 
-The hardened UI renders LIVE, but a fresh Top Queries import currently throws inside Canva's `updateDataRef` path. Temporary safe diagnostics are committed.
+The hardened UI renders LIVE, but a fresh Top Queries import currently throws inside Canva's `updateDataRef` path.
+
+Console capture is not reliable in the current Codex browser, so the connector now displays a temporary **P2 diagnostic trace (temporary)** panel after the failure. It contains only non-sensitive lifecycle facts.
 
 Codex should:
 1. pull latest main;
-2. rerun typecheck/tests because diagnostic source changed;
-3. reproduce exactly one Top Queries import in the authenticated Canva session;
-4. capture every `[GSC connector]` JSON-string console entry in timestamp order, including any abort line, plus the exact visible error;
-5. stop before speculative fixes.
+2. run `npm run lint:types` and `npm test` because diagnostic source changed;
+3. restart preview from the pulled source using the installed global `canva` CLI when available; use `npx` only as a fallback;
+4. confirm the selection UI reflects the latest source;
+5. reproduce exactly one Top Queries import in the authenticated Canva session;
+6. copy every line shown under **P2 diagnostic trace (temporary)** plus the exact visible error;
+7. stop before speculative fixes.
 
 Do not ask the owner to repeat terminal commands or re-authenticate unless Canva has actually expired the session.
 
