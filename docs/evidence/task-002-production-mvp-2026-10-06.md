@@ -304,3 +304,47 @@ Next stop:
 - exactly one authenticated Top Queries import;
 - capture every `[GSC connector]` line in timestamp order;
 - no speculative fix until that trace is recorded.
+
+
+## Diagnostic transport change — visible connector trace
+
+The next attempted console capture was blocked by the Codex browser surface:
+- authenticated Canva page interaction remained available;
+- DevTools/console contents were not available through that browser-control session;
+- the exact loaded bundle could not be independently confirmed against pulled source.
+
+The requested typecheck also exposed a temporary instrumentation-only scope error around `startedAt`; this has now been fixed on `main`.
+
+Decision:
+- stop depending on browser console access;
+- surface the safe diagnostic lifecycle lines directly in the connector UI after an import failure;
+- keep the trace temporary and remove it after the regression is diagnosed.
+
+The visible trace is backed by a shared in-memory diagnostic channel used by both selection UI and `getDataTable`. Because the UI remains subscribed after `updateDataRef` throws, later lifecycle events can appear in the panel as they arrive.
+
+The trace contains only:
+- timestamps;
+- event names;
+- source/title lengths;
+- Canva row/column limits;
+- dataset kind;
+- elapsed milliseconds;
+- abort state;
+- DataTable row/column counts;
+- mapped response status;
+- non-sensitive error name/code/message.
+
+It never includes:
+- OAuth tokens;
+- property identifiers;
+- source JSON contents;
+- query/page values;
+- authorization headers.
+
+Next diagnostic:
+- pull latest main;
+- typecheck/tests;
+- restart preview from the pulled source, preferring the installed global Canva CLI over network-dependent `npx`;
+- make exactly one Top Queries import attempt;
+- copy all lines visible under **P2 diagnostic trace (temporary)**;
+- stop before any further behavioral fix.
