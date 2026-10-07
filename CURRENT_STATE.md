@@ -127,9 +127,10 @@ Release:
 
 ## Expected next sequence
 
-1. Execute Task 002 as one coherent implementation checkpoint.
-2. Re-run deterministic tests and `docs/SCENARIO_CONTRACTS.md`.
-3. Capture representative LIVE/non-zero/SCALE evidence when a suitable property is available.
-4. Move to **P3 — Prepare Review** only after objective/product-quality checks pass.
-5. One prepared owner product pass.
-6. P5 Canva publication/commercial batching.
+1. Finish the current single diagnostic reproduction through Luna/Codex local execution; this is the already-in-flight observation, not a new owner cycle.
+2. Once the import defect is understood/fixed, run one batched P3 Luna certification campaign covering deterministic checks plus all currently available authenticated import/update/refresh/error scenarios.
+3. Continue independent scenarios after failures when safe and return one defect batch rather than alternating one failure/one fix.
+4. Send coherent defects to the Sol **web** implementation thread for one correction pass, then run focused Luna regression.
+5. Defer representative non-zero/SCALE evidence until a suitable mature property exists unless it becomes decision-critical; do not manufacture data merely to complete certification.
+6. Move to **P4 — Review & Refine** for one prepared owner product pass only after objective certification is clean/explicitly blocked.
+7. P5 Canva publication/commercial batching.
