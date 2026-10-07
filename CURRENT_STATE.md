@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** deterministic P2 validation is green and the hardened selection UI renders LIVE, but fresh import currently fails inside Canva's `updateDataRef` callback. Temporary non-sensitive diagnostics are committed to capture Canva's thrown error code plus DataTable row/column/limit summary before changing behavior.
+- **Current gate:** fresh import still fails in Canva `updateDataRef`. The first diagnostic showed host rejection before the data-table summary, but object payloads were collapsed. Latest main now emits primitive JSON lifecycle logs for `updateDataRef`, `getDataTable`, access-token readiness, Search Analytics completion, abort events, and final table dimensions. One authenticated reproduction should distinguish host rejection, lifecycle race/abort, remote latency, or returned-table rejection.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**No further owner interaction should be needed if the authenticated Canva session remains open. Hand the session back to Codex: pull latest main, run the minimal checks required by the diagnostic source change, reproduce one Top Queries import, capture the `[GSC connector]` console diagnostics, and stop without speculative product changes.**
+**No further owner interaction should be needed while the Canva session stays authenticated. Codex should pull latest main, rerun only typecheck/tests because source changed, reproduce one Top Queries import, capture all `[GSC connector]` JSON-string console lines in timestamp order, and stop without fixing anything.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
