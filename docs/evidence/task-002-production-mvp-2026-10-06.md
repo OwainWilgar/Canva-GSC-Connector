@@ -276,3 +276,31 @@ Its object argument was likewise collapsed to `Object` by the capture API. No cr
 ### Stop condition
 
 The exact user-visible error and all `[GSC connector]` messages returned by the browser API are recorded above. No speculative fix was made. The import remains **FAIL** and the P2 gate remains **NOT GREEN**; Task 002 stays ACTIVE and canonical stage stays P2.
+
+
+## Diagnostic refinement — lifecycle ordering
+
+The first safe trace produced a useful ordering signal:
+- `updateDataRef request`: 01:39:24.478Z
+- `updateDataRef threw`: 01:39:25.588Z
+- `data table summary`: 01:39:28.910Z
+
+This means the Canva host rejected `updateDataRef` before the connector logged its final completed DataTable summary.
+
+The public Canva API reference documents source/title/data-table validity failures for `updateDataRef`, but does not document a one-second timeout. Do not infer a timeout from one sample.
+
+The diagnostic instrumentation has been refined to emit primitive JSON strings so the Codex browser capture preserves field values. New checkpoints include:
+- updateDataRef request / resolve / throw with elapsed time;
+- getDataTable start;
+- access-token readiness;
+- Search Analytics completion;
+- AbortSignal firing;
+- final DataTable row/column/limit summary;
+- getDataTable failure status/name/message.
+
+All logs remain non-sensitive: no property identifiers, tokens, row values, authorization headers, or data-source contents are emitted.
+
+Next stop:
+- exactly one authenticated Top Queries import;
+- capture every `[GSC connector]` line in timestamp order;
+- no speculative fix until that trace is recorded.
