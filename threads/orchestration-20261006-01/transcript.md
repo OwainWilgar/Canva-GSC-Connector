@@ -1650,3 +1650,51 @@ I’ve updated the repo so the next step is one consolidated runtime diagnosis r
 > Pull latest main, preserving the existing evidence stash and untracked `package-lock.json`. Do not open Canva or attempt import. Record `node --version`, `canva --version`, `Get-Command canva | Format-List *`, and the globally installed Canva CLI package/version if resolvable. Start `canva apps start --override-frontend-port 8090` **in the foreground** and keep it alive while capturing stdout/stderr. From another shell in the **same execution boundary**, capture listeners on 8080/8081/8090 with both `Get-NetTCPConnection` and `netstat -ano`, capture the CLI PID and its full child process tree/command lines, and test `127.0.0.1:8090` plus `localhost:8090` with proxy bypass. If Codex can run an approved/unsandboxed boundary, repeat only the start + listener + curl check there. Classify the result as: reachable listener; listener only inside sandbox; CLI alive but never listening; child server spawns then exits; or CLI exits after printing ready. Stop after classification.
 
 The remaining import attempt is still untouched. Once we know whether this is **sandbox isolation vs CLI child-process failure**, we can fix preview transport in one move instead of poking Canva settings.
+
+
+## Turn 0045
+
+### User
+
+**Result: reachable listener** in the approved boundary. The preview is still running on port 8090.
+
+- `main` fast-forwarded to `d57d4aa`. All four existing stashes and the untracked `package-lock.json` were preserved.
+- Node: `v24.18.0`. Canva CLI: `2.13.2`; global package: `@canva/cli@2.13.2`. `Get-Command canva` resolves to `C:\Users\owilg\AppData\Roaming\npm\canva.ps1`.
+- Port 8090 is listening on IPv6 loopback `::1`, owned by CLI PID `13056` (`node.exe`, `canva apps start --override-frontend-port 8090`); no child processes were present. `localhost:8090` returned JavaScript successfully (curl exit `0`, 6,249,813 output characters). `127.0.0.1:8090` failed to connect (exit `7`).
+- Port 8080 is also listening on `::1`, owned by PID `30688` (`canva apps start --preview`). Port 8081 had no listener.
+
+The sandbox shell could not see or reach the listener; the approved-boundary check could. The host difference is also reflected in the IPv6-only bind: `localhost` works, while IPv4 `127.0.0.1` does not. I did not open Canva or attempt an import.
+
+I ran canva and it loaded for me
+
+### Assistant message 1
+
+That resolves the preview blocker. The dev server is healthy **in the approved/host boundary**, bound to IPv6 loopback; the sandbox simply couldn’t see it. Since Canva now loads for you, we can stop touching ports, CLI versions, Developer Portal settings, and browser permissions.
+
+I’m updating P2 to record **preview transport = resolved**. The only live step left in this diagnosis is the single Top Queries import attempt against the current pulled bundle, using the temporary on-screen trace if it fails.
+
+### Assistant message 2
+
+Perfect — that closes the preview/runtime detour. The important boundary is now explicit: **the Canva CLI works in the approved host boundary, binds IPv6 loopback (`::1`), and `localhost` is the correct host; Codex’s sandbox cannot observe that listener.** Since the app also loaded in Canva for you, the pulled bundle is now genuinely in play.
+
+I’m recording preview transport as resolved and narrowing P2 back to the original import diagnosis. No more port/process/browser-permission work is needed unless the listener disappears.
+
+### Assistant final
+
+Preview transport is now **resolved**.
+
+The important runtime truth is:
+- Canva CLI 2.13.2 is healthy in the approved/host boundary;
+- the preview binds IPv6 loopback (`::1`);
+- `http://localhost:8090` serves the current bundle;
+- `127.0.0.1:8090` fails because there is no IPv4 loopback bind;
+- the Codex sandbox cannot see the host listener;
+- Canva itself now loads the app.
+
+So: **do not touch ports, CLI versions, Developer Portal settings, or browser permissions again.**
+
+Hand the loaded Canva session back to Codex with this:
+
+> Keep the current approved-boundary preview running on `http://localhost:8090`. Do not rerun runtime diagnostics or deterministic checks. In the already-loaded authenticated Canva session, make exactly one **Top Queries → Import data** attempt. If it fails, wait several seconds and copy every line under **P2 diagnostic trace (temporary)** plus the exact visible error, then stop without changing code. If it succeeds, record that the import regression no longer reproduces and proceed directly into the planned batched Luna/Codex certification campaign rather than another one-check loop.
+
+I’ve updated `CURRENT_STATE.md`, Task 002, and the P2 evidence memo accordingly.
