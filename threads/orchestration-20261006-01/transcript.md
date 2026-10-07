@@ -1572,3 +1572,35 @@ Give Codex this next task:
 If Chrome shows a local-network permission icon/toggle in the address bar, that is the first thing I’d check. Canva explicitly calls that out as a cause of local previews not loading. citeturn503925search1
 
 I’ve also updated the project to follow the new factory rule: after this already-in-flight defect is understood, we’ll stop doing one-check/one-fix loops and run the remaining objective validation as one batched Codex/Luna certification pass.
+
+
+## Turn 0043
+
+### User
+
+Pulled `main` to `e5c9f20`. The global `canva apps start --preview` reported a successful build at `http://localhost:8080`, but the direct request to that URL timed out after 10 seconds.
+Per your stop rule, I stopped there: I didn’t check the Developer Portal, change browser permissions, open the preview, or attempt an import. The one-attempt budget remains unused. I recorded the blocker in the P2 evidence file and updated the task and current state. No source code changed.
+
+### Assistant message 1
+
+That stop was correct. A direct timeout on `http://localhost:8080` means the failure is **below Canva/Chrome entirely**: the local dev server is not actually reachable, even though the CLI printed a successful build. So we should diagnose the server process/listener itself before touching Developer Portal settings or browser permissions.
+
+I’m reading the latest state/evidence and the current Canva CLI start path now, then I’ll turn this into one bounded local runtime check rather than another UI loop.
+
+### Assistant message 2
+
+There’s a strong lead already in our own evidence: an earlier successful preview explicitly found **8080 and 8081 occupied by existing Node processes** and used **8090** instead. So before changing Canva settings again, Codex should verify whether `8080` is still owned by a stale process or whether the new CLI process is actually listening there.
+
+I’m changing the transport preflight to use an **explicit known-free port plus listener/PID verification**. Canva supports `--override-frontend-port`, and its docs say the direct dev-server URL should return the minified bundle when it is healthy.
+
+### Assistant final
+
+That was the correct stop. The timeout proves the issue is still **local preview transport**, not the connector/import path, and the diagnostic import attempt remains unused.
+
+The strongest lead is port ownership: an earlier successful run already recorded that **8080 and 8081 were occupied by Node processes** and used **8090** successfully. Canva supports an explicit frontend-port override, and a healthy dev server should return the minified app bundle when its local URL is opened directly. citeturn139399search1turn139399search2
+
+Give Codex this transport-only task:
+
+> Pull latest main. Do not open Canva or attempt import yet. Inspect Windows listeners on ports 8080, 8081, and 8090 and resolve each owning PID plus command line. Terminate **only** stale Canva/Node preview processes tied to this repository; leave unrelated Node processes alone. Start the pulled source with `canva apps start --override-frontend-port 8090` and keep that process alive. From a separate shell, run `curl.exe --noproxy "*" --max-time 5 http://127.0.0.1:8090/` and `curl.exe --noproxy "*" --max-time 5 http://localhost:8090/`. A healthy server should return minified JavaScript. If neither works, stop and report the listener/PID/process output. If one works and one fails, report that host-resolution/proxy boundary. Only after direct reachability succeeds, set the Canva Developer Portal Development URL to the exact working URL, reopen preview, and confirm the latest connector UI/temporary diagnostic panel is loaded. Then—and only then—use the single Top Queries diagnostic import attempt.
+
+I’ve updated `CURRENT_STATE.md`, Task 002, and the evidence memo to make that the canonical next step. No connector source change is needed for this transport check.
