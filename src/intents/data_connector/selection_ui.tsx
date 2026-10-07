@@ -241,17 +241,27 @@ export function SelectionUi({
 
       const title = dataSourceTitle(dataset, property);
 
-      console.debug("[GSC connector] updateDataRef request", {
-        sourceBytes: new TextEncoder().encode(source).length,
-        titleLength: title.length,
-        limit: request.limit,
-        dataset,
-      });
+      const startedAt = Date.now();
+      console.debug(
+        `[GSC connector] updateDataRef request ${JSON.stringify({
+          sourceBytes: new TextEncoder().encode(source).length,
+          titleLength: title.length,
+          limit: request.limit,
+          dataset,
+        })}`,
+      );
 
       const result = await request.updateDataRef({
         source,
         title,
       });
+
+      console.debug(
+        `[GSC connector] updateDataRef resolved ${JSON.stringify({
+          status: result.status,
+          elapsedMs: Date.now() - startedAt,
+        })}`,
+      );
 
       if (result.status === "completed") {
         setSuccess(
@@ -282,8 +292,10 @@ export function SelectionUi({
       );
     } catch (caught) {
       console.error(
-        "[GSC connector] updateDataRef threw",
-        canvaErrorSummary(caught),
+        `[GSC connector] updateDataRef threw ${JSON.stringify({
+          ...canvaErrorSummary(caught),
+          elapsedMs: Date.now() - startedAt,
+        })}`,
       );
       setError(
         "Could not save this Search Console selection in Canva. Try again.",
