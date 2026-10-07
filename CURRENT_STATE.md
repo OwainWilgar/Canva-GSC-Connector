@@ -9,7 +9,7 @@ Updated: 2026-10-06
 **P2 — Build**
 
 - **Stage status:** ACTIVE
-- **Current gate:** connector import regression diagnosis is prepared, but the latest Codex run could not load the pulled local bundle in Canva. Restore local preview transport first: the Canva Developer Portal Development URL must exactly match the running local server and Chromium must allow Canva local-network access. Do not consume the remaining import attempt until the current pulled bundle visibly loads.
+- **Current gate:** local preview transport is the immediate blocker, not connector behavior. The CLI reported a build at port 8080 but direct HTTP timed out. Earlier evidence already showed stale Node listeners on 8080/8081 and a successful preview on 8090. Next: inspect port owners, terminate only stale Canva-preview processes, start the pulled source on explicit port 8090, and prove the bundle is reachable directly before touching Canva or consuming the remaining import attempt.
 - **Exit condition:** production-shaped connector passes deterministic checks and scenario contracts, required datasets/reconnect/empty/error states are coherent, representative LIVE checks remain green, and the repo is ready to enter P3 — Prepare Review.
 - **Next expected stage:** P3 — Prepare Review
 
@@ -83,7 +83,7 @@ Decide the commercial lane only after the product/distribution proof is credible
 
 ## Current owner need
 
-**Codex should diagnose preview transport only. Start the local server, verify `http://localhost:8080` directly returns the app bundle, verify the Developer Portal Development URL matches it exactly, and ensure Chrome/Chromium grants Canva local-network access. If the browser requires the owner to toggle that permission or change the Developer Portal URL, ask only for that bounded action. Once the pulled connector UI is visibly loaded, resume the single diagnostic import attempt.**
+**Codex should diagnose preview transport only. Inspect listeners/PIDs on 8080/8081/8090, terminate only stale Canva/Node preview processes tied to this repo, start `canva apps start --override-frontend-port 8090`, and verify the bundle with a proxy-bypassed request to `127.0.0.1:8090` and `localhost:8090`. Only after that succeeds should the Developer Portal Development URL be set to the exact working URL and Canva preview reopened. Do not attempt import before the current pulled bundle visibly loads.**
 
 Use `docs/OWNER_LIVE_PROOF.md` as the exact handoff. It batches:
 1. create the public Canva app;
