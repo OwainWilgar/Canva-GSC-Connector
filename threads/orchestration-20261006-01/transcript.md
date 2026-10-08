@@ -1698,3 +1698,40 @@ Hand the loaded Canva session back to Codex with this:
 > Keep the current approved-boundary preview running on `http://localhost:8090`. Do not rerun runtime diagnostics or deterministic checks. In the already-loaded authenticated Canva session, make exactly one **Top Queries → Import data** attempt. If it fails, wait several seconds and copy every line under **P2 diagnostic trace (temporary)** plus the exact visible error, then stop without changing code. If it succeeds, record that the import regression no longer reproduces and proceed directly into the planned batched Luna/Codex certification campaign rather than another one-check loop.
 
 I’ve updated `CURRENT_STATE.md`, Task 002, and the P2 evidence memo accordingly.
+
+
+## Turn 0046
+
+### User
+
+whats our roadmap status like
+
+### Assistant message 1
+
+I’ll give you the current roadmap as a stage-by-stage snapshot, not just the immediate bug. I’m reading the canonical state and active task first so the status reflects the repo, not stale context.
+
+### Assistant message 2
+
+Roadmap-wise, we’re in a pretty good place: the **hard architectural risk is behind us**, but we’re not yet in release-polish territory. The project is still in **P2 — Build**, and the remaining blocker is narrow rather than foundational.
+
+### Assistant final
+
+We’re currently in **P2 — Build**, and I’d describe the roadmap as **roughly halfway to public release, but ~85–90% through the actual product build**.
+
+The stage picture is:
+
+- **P1 — Prove: COMPLETE / PASS.** OAuth, property discovery, Top Queries, Top Pages, Trend, saved references, and native Canva refresh were all proven LIVE. The key architecture decision is settled: direct Canva → Google Search Console, Canva-managed OAuth, no custom backend.
+- **P2 — Build: ACTIVE, late-stage.** The production-shaped UI, error/reconnect handling, row limits, data correctness, docs, and deterministic coverage are built. Local type/tests/build have been green, and the Canva preview transport is now resolved. The one active product defect is the fresh **Top Queries import failing through `updateDataRef`** in the hardened build. We already have the temporary visible diagnostic panel ready for the next single reproduction.
+- **P3 — Certification / Prepare Review: NEXT.** Once that import regression is fixed, we stop the one-check loop and run one batched Codex/Luna campaign across the whole objective surface: Top Queries/Pages/Trend, import, Update data, refresh, reconnect/errors, empty data, and the scenario contracts. Independent failures get collected into one defect batch.
+- **P4 — Review & Refine: NOT STARTED.** One prepared owner product/UX pass after objective certification is clean.
+- **P5 — Release / Marketplace: NOT STARTED.** This is mostly publication work rather than core engineering: production Google OAuth verification requirements, privacy/support/legal URLs, Marketplace copy/category/screenshots, monetization decision, fresh competitor check, reviewer resources, and submission.
+
+So the main takeaway is: **we are not stuck on whether the product can work**. That was answered in P1. We’re stuck on one regression in the production-shaped import flow. If that turns out to be a small Canva contract/integration mistake—as the evidence currently suggests—we should move fairly quickly from P2 into a single certification pass.
+
+The biggest schedule uncertainty after that is actually **P5**, especially Google OAuth/publication requirements and Canva Marketplace review, not engineering.
+
+A useful shorthand is:
+
+**Proof ✅ → Build ~90% → Certification ⏳ → Owner review → Release setup/submission.**
+
+I would not add Country, Device, filters, charts, AI, or other scope before launch. The current MVP boundary is still the right one.
